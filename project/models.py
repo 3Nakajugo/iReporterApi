@@ -6,13 +6,13 @@ incidents = []
 
 
 class Incident:
-    def __init__(self, incident_id, date, created_by, incident_type, location, status, file, comment):
+    def __init__(self, created_by, incident_type, location, file, comment):
         self.incident_id = random.randint(1, 1000)
         self.date = datetime.datetime.now()
         self.created_by = created_by
         self.incident_type = incident_type
         self.location = location
-        self.status = status
+        self.status = "draft"
         self.file = file
         self.comment = comment
 
