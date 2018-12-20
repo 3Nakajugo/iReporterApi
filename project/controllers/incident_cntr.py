@@ -17,6 +17,9 @@ class IncidentCntr:
 
     def get_all_redflags(self):
         if len(incidents) > 0:
-            for incident in incidents:
+            return incidents
+
+    def get_single_redflag(self, incident_id):
+        for incident in incidents:
+            if incident['incident_id'] == incident_id:
                 return incident
-        

@@ -60,3 +60,11 @@ def get_all_redflags():
     if all_incidents:
         return jsonify({"data": all_incidents, "status": 200, "message": "all incidents"}), 200
     return jsonify({"status": 200, "message": "No incidents to display"}), 200
+
+
+@app.route('/api/v1/incidents/<int:incident_id>', methods=['GET'])
+def get_single_redflag(incident_id):
+    single_redflag = incident_controller.get_single_redflag(incident_id)
+    if single_redflag:
+        return jsonify({"status": 200, "data": single_redflag}), 200
+    return jsonify({"status": 404, "message": "no incident with such an id"}), 404
