@@ -1,5 +1,3 @@
-import random
-import datetime
 from flask import Flask, jsonify, request
 from .models import Incident, User, incidents
 from .controllers.incident_cntr import IncidentCntr
@@ -49,6 +47,11 @@ def create_incident():
         comment=incident_obj.comment)
     if add_incident:
         return jsonify({"status": 201, "data": incidents, "message": "incident {} has been created".format(incident_type)}), 201
+
+
+"""
+route for getting all red flags
+"""
 
 
 @app.route('/api/v1/incidents', methods=['GET'])
