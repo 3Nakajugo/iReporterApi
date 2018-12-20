@@ -18,7 +18,7 @@ class Incident:
 
     def to_json(self):
         return {
-            "id": self.incident_id,
+            "incident_id": self.incident_id,
             "date": self.date,
             "created_by": self.created_by,
             "incident_type": self.incident_type,
