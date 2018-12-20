@@ -1,0 +1,13 @@
+language : python
+
+version :
+  - 3.6.5
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - pytest --cov=.
+
+after_script:
+  - coveralls
