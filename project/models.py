@@ -4,9 +4,12 @@ import random
 
 incidents = []
 
-print (datetime.date.today())
+print(datetime.date.today())
+
 
 class Incident:
+    """class for incidents"""
+
     def __init__(self, created_by, incident_type, location, file, comment):
         self.incident_id = random.randint(1, 1000)
         self.date = datetime.date.today()
@@ -18,11 +21,15 @@ class Incident:
         self.comment = comment
 
     def to_json(self):
+        """ 
+        method to turn incident to dictionary
+        """
         return {
             "incident_id": self.incident_id,
             "date": self.date,
             "created_by": self.created_by,
             "incident_type": self.incident_type,
+            "location": self.location,
             "status": self.status,
             "file": self.file,
             "comment": self.comment

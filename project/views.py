@@ -44,6 +44,7 @@ def create_incident():
         comment=incident_obj.comment)
     if add_incident:
         return jsonify({"status": 201, "data": [{"message": "incident {} has been created".format(incident_type)}]}), 201
+    return jsonify({"status": 400, "message": "could not create incident"}), 400
 
 
 @app.route('/api/v1/incidents', methods=['GET'])
@@ -77,3 +78,31 @@ def delete_single_redflag(incident_id):
     if single_redflag:
         return jsonify({"status": 200, "data": [{"id": incident_id, "message": "red-flag record has been deleted"}]}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
+
+
+@app.route('/api/v1/incidents/<int:incident_id>/location', methods=['PATCH'])
+def edit_location(incident_id):
+    """
+    method for editing location of a single redflag
+    """
+    edit_redflag = incident_controller.update_location(incident_id)
+    if edit_redflag:
+        edit_redflag[0]['location'] = request.json.get(
+            'location', edit_redflag[0]['location'])
+    if edit_redflag[0]['location']:
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 404, "error": "no incident with such an id"}), 404
+
+@app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
+def edit_comment(incident_id):
+    """
+    method for editing location of a single redflag
+    """
+    edit_redflag = incident_controller.update_location(incident_id)
+    if edit_redflag:
+        edit_redflag[0]['comment'] = request.json.get(
+            'comment', edit_redflag[0]['comment'])
+    if edit_redflag[0]['comment']:
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 404, "error": "no incident with such an id"}), 404
+
