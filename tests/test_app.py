@@ -8,6 +8,13 @@ class TestApi(unittest.TestCase):
 
     def setUp(self):
         self.test_client = app.test_client()
+        self.incident = {
+            "created_by": "idlfowfk",
+            "incident_type": "redflag",
+            "location": "2123 13241",
+            "file": "error.png",
+            "comment": "jisckmsldkmspoll,ldjo"
+        }
 
     def test_index(self):
         response = self.test_client.get('/api/v1/welcome')
@@ -16,11 +23,6 @@ class TestApi(unittest.TestCase):
         self.assertEqual(data['message'], "Welcome to iReporter")
 
     # def test_create_incident(self):
-    #     incident = Incident("edna", "redflag", "899 9i0",
-    #                         "kdlk.jpg", "jncdsndfiowj")
-    #     response = self.test_client.post('/api/v1/incidents', data=json.dumps(dict(created_by=incident.created_by,
-    #                                                                               incident_type=incident.incident_type,
-    #                                                                               location=incident.location,
-    #                                                                               file=incident.file,
-    #                                                                               comment=incident.comment)))
+    #     response = self.test_client.post(
+    #         '/api/v1/incidents', data=json.dumps(self.incident))
     #     self.assertEqual(response.status_code, 201)

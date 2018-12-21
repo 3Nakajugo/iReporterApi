@@ -8,30 +8,32 @@ incident_validator = Validator()
 
 app = Flask(__name__)
 
-"""
-route for home page
-"""
-
 
 @app.route('/api/v1/welcome')
 def index():
+    """
+        method for home page
+    """
     return jsonify({"message": "Welcome to iReporter",
                     "status": 200})
 
 
-"""
-route for posting/creating an incident
-"""
-
-
 @app.route('/api/v1/incidents', methods=['POST'])
 def create_incident():
+    """
+    method for creating an incident
+    """
     request_data = request.get_json()
-    created_by = request_data.get('created_by')
-    incident_type = request_data.get('incident_type')
-    location = request_data.get('location')
-    file = request_data.get('file')
-    comment = request_data.get('comment')
+    # created_by = request_data.get('created_by')
+    # incident_type = request_data.get('incident_type')
+    # location = request_data.get('location')
+    # file = request_data.get('file')
+    # comment = request_data.get('comment')
+    created_by = request_data['created_by']
+    incident_type = request_data['incident_type']
+    location = request_data['location']
+    file = request_data['file']
+    comment = request_data['comment']
     valid_incident = incident_validator.validate_incident(created_by,
                                                           incident_type, location, file, comment)
     if valid_incident:
@@ -49,13 +51,11 @@ def create_incident():
         return jsonify({"status": 201, "data": incidents, "message": "incident {} has been created".format(incident_type)}), 201
 
 
-"""
-route for getting all red flags
-"""
-
-
 @app.route('/api/v1/incidents', methods=['GET'])
 def get_all_redflags():
+    """
+    method for getting all red flags
+    """
     all_incidents = incident_controller.get_all_redflags()
     if all_incidents:
         return jsonify({"data": all_incidents, "status": 200, "message": "all incidents"}), 200
@@ -64,6 +64,9 @@ def get_all_redflags():
 
 @app.route('/api/v1/incidents/<int:incident_id>', methods=['GET'])
 def get_single_redflag(incident_id):
+    """
+    method for getting single redflag
+    """
     single_redflag = incident_controller.get_single_redflag(incident_id)
     if single_redflag:
         return jsonify({"status": 200, "data": single_redflag}), 200
