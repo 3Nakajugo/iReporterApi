@@ -48,7 +48,7 @@ iReporter enables any/every citizen to bring any form of corruption to the notic
 |Create a red-flag record       | POST      |/api/v1/incidents                      |
 | Get all red-flag records      |GET        |/api/v1/incidents                      |
 | Get a specific red-flag record|GET        |/api/v1/incidents/<int:incident_id>    |
-|Edit a specific red-flag record|PUT        |/api/v1/incidents/<int:incident_id>    |
+|Edit a specific red-flag record|PATCH        |/api/v1/incidents/<int:incident_id>    |
 |Delete a red-flag record	    |  DELETE   | /api/v1/incidents/<int:incident_id>  	|
 
 ### Author
