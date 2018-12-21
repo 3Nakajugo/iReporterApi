@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from .models import Incident, User, incidents
+from .models import Incident, incidents
 from .controllers.incident_cntr import IncidentCntr
 from .validator import Validator
 
