@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from .models import Incident, User, incidents
+from .models import Incident, incidents
 from .controllers.incident_cntr import IncidentCntr
 from .validator import Validator
 
@@ -23,17 +23,12 @@ def create_incident():
     """
     method for creating an incident
     """
-    request_data = request.get_json()
-    # created_by = request_data.get('created_by')
-    # incident_type = request_data.get('incident_type')
-    # location = request_data.get('location')
-    # file = request_data.get('file')
-    # comment = request_data.get('comment')
-    created_by = request_data['created_by']
-    incident_type = request_data['incident_type']
-    location = request_data['location']
-    file = request_data['file']
-    comment = request_data['comment']
+    request_data = request.get_json(force=True)
+    created_by = request_data.get('created_by')
+    incident_type = request_data.get('incident_type')
+    location = request_data.get('location')
+    file = request_data.get('file')
+    comment = request_data.get('comment')
     valid_incident = incident_validator.validate_incident(created_by,
                                                           incident_type, location, file, comment)
     if valid_incident:
@@ -48,7 +43,7 @@ def create_incident():
         file=incident_obj.file,
         comment=incident_obj.comment)
     if add_incident:
-        return jsonify({"status": 201, "data": incidents, "message": "incident {} has been created".format(incident_type)}), 201
+        return jsonify({"status": 201, "data": [{"message": "incident {} has been created".format(incident_type)}]}), 201
 
 
 @app.route('/api/v1/incidents', methods=['GET'])
@@ -70,4 +65,15 @@ def get_single_redflag(incident_id):
     single_redflag = incident_controller.get_single_redflag(incident_id)
     if single_redflag:
         return jsonify({"status": 200, "data": single_redflag}), 200
+    return jsonify({"status": 404, "message": "no incident with such an id"}), 404
+
+
+@app.route('/api/v1/incidents/<int:incident_id>', methods=['DELETE'])
+def delete_single_redflag(incident_id):
+    """
+    method for deleting a single redflag
+    """
+    single_redflag = incident_controller.delete_single_redflag(incident_id)
+    if single_redflag:
+        return jsonify({"status": 200, "data": [{"id": incident_id, "message": "red-flag record has been deleted"}]}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404

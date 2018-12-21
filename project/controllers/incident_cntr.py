@@ -23,3 +23,9 @@ class IncidentCntr:
         for incident in incidents:
             if incident['incident_id'] == incident_id:
                 return incident
+
+    def delete_single_redflag(self, incident_id):
+        for incident in incidents:
+            if incident["incident_id"] == incident_id:
+                incidents.remove(incident)
+                return incidents

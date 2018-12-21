@@ -7,6 +7,9 @@ from project.models import Incident
 class TestApi(unittest.TestCase):
 
     def setUp(self):
+        """
+        test for index page
+        """
         self.test_client = app.test_client()
         self.incident = {
             "created_by": "idlfowfk",
@@ -17,12 +20,15 @@ class TestApi(unittest.TestCase):
         }
 
     def test_index(self):
+        """
+        test for creating redflag
+        """
         response = self.test_client.get('/api/v1/welcome')
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['message'], "Welcome to iReporter")
 
-    # def test_create_incident(self):
-    #     response = self.test_client.post(
-    #         '/api/v1/incidents', data=json.dumps(self.incident))
-    #     self.assertEqual(response.status_code, 201)
+    def test_create_incident(self):
+        response = self.test_client.post(
+            '/api/v1/incidents', data=json.dumps(self.incident))
+        self.assertEqual(response.status_code, 201)
