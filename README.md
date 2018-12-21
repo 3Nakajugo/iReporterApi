@@ -9,7 +9,7 @@ iReporter enables any/every citizen to bring any form of corruption to the notic
 * flask
 * Python 3.7
 
-## Running App
+## Running Application
 
 * clone the repository
 
