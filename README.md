@@ -12,9 +12,11 @@ iReporter enables any/every citizen to bring any form of corruption to the notic
 ## Running App
 
 * clone the repository
+
 ```$ git clone https://github.com/3Nakajugo/iReporterApi.git```
 
 * Change directory
+
 ```$cd (folder name)```
 
 * create virtualenv
