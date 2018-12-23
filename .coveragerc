@@ -1,1 +1,11 @@
-     
+[report]
+omit =
+    */__pycache__/*
+    *.pyc
+    */__init__.py
+    *__init__.py
+    */project/views.py
+    */project/validator.py
+    */project/models.py
+    */tests/__init__.py 
+    */project/controllers/*       
