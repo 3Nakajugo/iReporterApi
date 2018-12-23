@@ -3,14 +3,8 @@ from project.models import Incident, incidents
 
 class IncidentCntr:
 
-    def create_incident(self, created_by, incident_type, location, file, comment):
-        incident = Incident(
-            created_by=created_by,
-            incident_type=incident_type,
-            location=location,
-            file=file,
-            comment=comment
-        )
+    def create_incident(self, incident):
+
         new_incident = incident.to_json()
         incidents.append(new_incident)
         return incidents
@@ -37,11 +31,12 @@ class IncidentCntr:
         for incident in incidents:
             if incident["incident_id"] == incident_id:
                 incidents.remove(incident)
-                return incidents
+                return "incident was deleted"
 
     def update_location(self, incident_id):
         """ 
         updates single  redflags
-        """ 
-        red_flag = [incident for incident in incidents if incident['incident_id'] == incident_id]
+        """
+        red_flag = [
+            incident for incident in incidents if incident['incident_id'] == incident_id]
         return red_flag

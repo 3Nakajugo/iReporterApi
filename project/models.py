@@ -1,5 +1,4 @@
 import datetime
-import random
 
 
 incidents = []
@@ -11,7 +10,7 @@ class Incident:
     """class for incidents"""
 
     def __init__(self, created_by, incident_type, location, file, comment):
-        self.incident_id = random.randint(1, 1000)
+        self.incident_id = len(incidents)+1
         self.date = datetime.date.today()
         self.created_by = created_by
         self.incident_type = incident_type
