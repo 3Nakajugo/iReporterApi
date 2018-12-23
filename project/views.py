@@ -36,12 +36,7 @@ def create_incident():
     incident_obj = Incident(created_by,
                             incident_type, location, file, comment)
 
-    add_incident = incident_controller.create_incident(
-        created_by=incident_obj.created_by,
-        incident_type=incident_obj.incident_type,
-        location=incident_obj.location,
-        file=incident_obj.file,
-        comment=incident_obj.comment)
+    add_incident = incident_controller.create_incident(incident_obj)
     if add_incident:
         return jsonify({"status": 201, "data": [{"message": "incident {} has been created".format(incident_type)}]}), 201
     return jsonify({"status": 400, "message": "could not create incident"}), 400
@@ -74,8 +69,9 @@ def delete_single_redflag(incident_id):
     """
     method for deleting a single redflag
     """
-    single_redflag = incident_controller.delete_single_redflag(incident_id)
-    if single_redflag:
+    delete_single_redflag = incident_controller.delete_single_redflag(
+        incident_id)
+    if delete_single_redflag:
         return jsonify({"status": 200, "data": [{"id": incident_id, "message": "red-flag record has been deleted"}]}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
 
@@ -93,10 +89,11 @@ def edit_location(incident_id):
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
     return jsonify({"status": 404, "error": "no incident with such an id"}), 404
 
+
 @app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
 def edit_comment(incident_id):
     """
-    method for editing location of a single redflag
+    method for editing comment of a single redflag
     """
     edit_redflag = incident_controller.update_location(incident_id)
     if edit_redflag:
@@ -105,4 +102,3 @@ def edit_comment(incident_id):
     if edit_redflag[0]['comment']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
     return jsonify({"status": 404, "error": "no incident with such an id"}), 404
-
