@@ -93,7 +93,7 @@ def edit_location(incident_id):
 @app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
 def edit_comment(incident_id):
     """
-    method for editing location of a single redflag
+    method for editing comment of a single redflag
     """
     edit_redflag = incident_controller.update_location(incident_id)
     if edit_redflag:
