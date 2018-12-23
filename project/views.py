@@ -96,7 +96,7 @@ def edit_comment(incident_id):
     method for editing comment of a single redflag
     """
     edit_redflag = incident_controller.update_location(incident_id)
-    if edit_redflag:
+    if  edit_redflag:
         edit_redflag[0]['comment'] = request.json.get(
             'comment', edit_redflag[0]['comment'])
     if edit_redflag[0]['comment']:
