@@ -85,6 +85,7 @@ def edit_location(incident_id):
     if edit_redflag:
         edit_redflag[0]['location'] = request.json.get(
             'location', edit_redflag[0]['location'])
+    
     if edit_redflag[0]['location']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
     return jsonify({"status": 404, "error": "no incident with such an id"}), 404
