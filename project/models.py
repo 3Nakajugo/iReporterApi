@@ -3,8 +3,6 @@ import datetime
 
 incidents = []
 
-print(datetime.date.today())
-
 
 class Incident:
     """class for incidents"""
