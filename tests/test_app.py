@@ -5,7 +5,6 @@ from project.models import Incident, incidents
 
 
 class TestApi(unittest.TestCase):
-
     def setUp(self):
         """
         test for index page
@@ -18,6 +17,16 @@ class TestApi(unittest.TestCase):
             "file": "error.png",
             "comment": "jisckmsldkmspoll,ldjo"
         }
+        self.incident_missing = {
+            "created_by": "edna",
+            "incident_type": "redflag",
+            "location": " ",
+            "file": "error.png",
+            "comment": "jisckmsldkmspoll,ldjo"
+        }
+
+    def tearDown(self):
+        self.incident = None
 
     def test_index(self):
         """
@@ -31,7 +40,7 @@ class TestApi(unittest.TestCase):
     def test_create_incident(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident))
-        response_data = json.loads(response.data)
+        response_data = json.loads(response.data.decode())
         self.assertEqual(response_data["data"], [
             {
                 "message": "incident redflag has been created"
@@ -58,11 +67,12 @@ class TestApi(unittest.TestCase):
     def test_get_single_redflag_that_exist(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident))
+        print(len(incidents))
 
-        response = self.test_client.get('/api/v1/incidents/2')
+        response = self.test_client.get('/api/v1/incidents/1')
         request_data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(request_data, dict)
+        self.assertIs(type(request_data), dict)
 
     def test_delete_redflag(self):
         response = self.test_client.post(
@@ -77,17 +87,24 @@ class TestApi(unittest.TestCase):
                 "message": "red-flag record has been deleted"
             }
         ])
-        self.assertTrue(request_data, dict)
+        self.assertIs(type(request_data), dict)
 
     def test_delete_redflag_that_doesnot_exist(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident))
         response = self.test_client.delete('/api/v1/incidents/5')
-        request_data = json.loads(response.data)
+        request_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 404)
         self.assertEqual(request_data["status"], 404)
         self.assertEqual(request_data["message"],
                          "no incident with such an id")
+    
+    def test_posting_missing_field(self):
+        response = self.test_client.post(
+            '/api/v1/incidents', data=json.dumps(self.incident_missing))
+        self.assertEqual(response.status_code, 404)
+
+
 
     # def test_edit_location_of_redlag_that_doesnot_exist(self):
     #     response = self.test_client.post(

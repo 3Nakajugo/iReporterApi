@@ -2,6 +2,7 @@ import datetime
 
 
 incidents = []
+users = []
 
 
 class Incident:
@@ -33,27 +34,30 @@ class Incident:
         }
 
 
-# class User:
-#     def __init__(self, user_id, first_name, last_name, other_names, email, tel, user_name, registered, isadmin):
-#         self.user_id = random.randint(1, 5000)
-#         self.first_name = first_name
-#         self.last_name = last_name
-#         self.other_names = other_names
-#         self.email = email
-#         self.tel = tel
-#         self.user_name = user_name
-#         self.registered = datetime.datetime.now()
-#         self.isadmin = isadmin
+class User:
+    def __init__(self, *args):
+        self.user_id = len(users)+1
+        self.first_name = args[0]
+        self.last_name = args[1]
+        self.other_names = args[2]
+        self.email = args[3]
+        self.tel = args[4]
+        self.user_name = args[5]
+        self.password = args[6]
+        self.registered = datetime.datetime.now()
+        self.isadmin = False
 
-#     def user_to_json(self):
-#         return {
-#             "user_id": self.user_id,
-#             "First Name": self.first_name,
-#             "Last Name": self.last_name,
-#             "Other Names": self.last_name,
-#             "Email": self.email,
-#             "Telephone": self.tel,
-#             "user_name": self.user_name,
-#             "Registered": self.registered,
-#             "Is Admin": self.isadmin
-#         }
+    def user_to_json(self):
+        return {
+            "user_id": self.user_id,
+            "First Name": self.first_name,
+            "Last Name": self.last_name,
+            "Other Names": self.other_names,
+            "Email": self.email,
+            "Telephone": self.tel,
+            "user_name": self.user_name,
+            "password": self.password,
+            "Registered": self.registered,
+            "Is Admin": self.isadmin
+
+        }
