@@ -1,12 +1,15 @@
 from flask import Flask, jsonify, request
-from .models import Incident, incidents
+from .models import Incident, incidents, User, users
 from .controllers.incident_cntr import IncidentCntr
+from .controllers.user_cntr import UserController
 from .validator import Validator
 
 incident_controller = IncidentCntr()
+user_cntr = UserController()
 incident_validator = Validator()
 
 app = Flask(__name__)
+
 
 
 @app.route('/api/v1/welcome')
@@ -16,6 +19,35 @@ def index():
     """
     return jsonify({"message": "Welcome to iReporter",
                     "status": 200})
+
+
+@app.route('/api/v1/users/signup', methods=['POST'])
+def register_user():
+    """
+        method for creating user
+    """
+    request_data = request.get_json(force=True)
+    first_name = request_data.get('first_name')
+    last_name = request_data.get('last_name')
+    other_names = request_data.get('other_names')
+    email = request_data.get('email')
+    tel = request_data.get('tel')
+    user_name = request_data.get('user_name')
+    password = request_data.get('password')
+    user = User(first_name, last_name, other_names,
+                email, tel, user_name, password)
+    user_record = user_cntr.create_user(user)
+    if user_record:
+        return jsonify({"message": user_record})
+
+
+@app.route('/api/v1/users', methods=['GET'])
+def get_user():
+    """
+        method for creating user
+    """
+    for user in users:
+        return jsonify({"users": user})
 
 
 @app.route('/api/v1/incidents', methods=['POST'])
@@ -58,6 +90,7 @@ def get_single_redflag(incident_id):
     """
     method for getting single redflag
     """
+    
     single_redflag = incident_controller.get_single_redflag(incident_id)
     if single_redflag:
         return jsonify({"status": 200, "data": single_redflag}), 200
@@ -85,20 +118,21 @@ def edit_location(incident_id):
     if edit_redflag:
         edit_redflag[0]['location'] = request.json.get(
             'location', edit_redflag[0]['location'])
+
     if edit_redflag[0]['location']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
     return jsonify({"status": 404, "error": "no incident with such an id"}), 404
 
 
-# @app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
-# def edit_comment(incident_id):
-#     """
-#     method for editing comment of a single redflag
-#     """
-#     edit_redflag = incident_controller.update_location(incident_id)
-#     if edit_redflag:
-#         edit_redflag[0]['comment'] = request.json.get(
-#             'comment', edit_redflag[0]['comment'])
-#     if edit_redflag[0]['comment']:
-#         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
-#     return jsonify({"status": 404, "error": "no incident with such an id"}), 404
+@app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
+def edit_comment(incident_id):
+    """
+    method for editing comment of a single redflag
+    """
+    edit_redflag = incident_controller.update_location(incident_id)
+    if edit_redflag:
+        edit_redflag[0]['comment'] = request.json.get(
+            'comment', edit_redflag[0]['comment'])
+    if edit_redflag[0]['comment']:
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 404, "error": "no incident with such an id"}), 404

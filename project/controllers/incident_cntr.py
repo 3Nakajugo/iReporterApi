@@ -4,7 +4,9 @@ from project.models import Incident, incidents
 class IncidentCntr:
 
     def create_incident(self, incident):
-
+        """ 
+        method to create incident
+        """
         new_incident = incident.to_json()
         incidents.append(new_incident)
         return incidents
@@ -20,6 +22,7 @@ class IncidentCntr:
         """ 
         gets single redflags
         """
+
         for incident in incidents:
             if incident['incident_id'] == incident_id:
                 return incident
