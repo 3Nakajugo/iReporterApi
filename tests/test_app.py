@@ -69,7 +69,7 @@ class TestApi(unittest.TestCase):
             '/api/v1/incidents', data=json.dumps(self.incident))
         print(len(incidents))
 
-        response = self.test_client.get('/api/v1/incidents/1')
+        response = self.test_client.get('/api/v1/incidents/2')
         request_data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertIs(type(request_data), dict)
@@ -102,7 +102,7 @@ class TestApi(unittest.TestCase):
     def test_posting_missing_field(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident_missing))
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
 
 
