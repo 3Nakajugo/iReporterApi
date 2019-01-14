@@ -11,7 +11,6 @@ incident_validator = Validator()
 app = Flask(__name__)
 
 
-
 @app.route('/api/v1/welcome')
 def index():
     """
@@ -47,7 +46,7 @@ def get_user():
         method for creating user
     """
     for user in users:
-        return jsonify({"users": user})
+        return jsonify({"users": users})
 
 
 @app.route('/api/v1/incidents', methods=['POST'])
@@ -90,7 +89,7 @@ def get_single_redflag(incident_id):
     """
     method for getting single redflag
     """
-    
+
     single_redflag = incident_controller.get_single_redflag(incident_id)
     if single_redflag:
         return jsonify({"status": 200, "data": single_redflag}), 200
