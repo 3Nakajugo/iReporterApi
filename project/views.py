@@ -17,7 +17,7 @@ def index():
         method for home page
     """
     return jsonify({"message": "Welcome to iReporter",
-                    "status": 200})
+                    "status": 200}), 200
 
 
 @app.route('/api/v1/users/signup', methods=['POST'])
@@ -30,14 +30,19 @@ def register_user():
     last_name = request_data.get('last_name')
     other_names = request_data.get('other_names')
     email = request_data.get('email')
-    tel = request_data.get('tel')
+    telephone = request_data.get('telephone')
     user_name = request_data.get('user_name')
     password = request_data.get('password')
+    valid_user = incident_validator.validate_user_credentials(
+        email, password, user_name, telephone)
+    if valid_user:
+        return jsonify({"status": 400, "message": "some fields are missing"}), 400
     user = User(first_name, last_name, other_names,
-                email, tel, user_name, password)
+                email, telephone, user_name, password)
     user_record = user_cntr.create_user(user)
     if user_record:
-        return jsonify({"message": user_record})
+        return jsonify({"message": "User has been created",
+                        "status": 200}), 200
 
 
 @app.route('/api/v1/users', methods=['GET'])
@@ -45,8 +50,11 @@ def get_user():
     """
         method for creating user
     """
-    for user in users:
-        return jsonify({"users": users})
+    if len(users) > 0:
+        all_users = user_cntr.get_all_users()
+        if all_users:
+            return jsonify({"data": all_users, "status": 200, "message": "all users"}), 200
+    return jsonify({"status": 200, "message": "No Users to display"}), 200
 
 
 @app.route('/api/v1/incidents', methods=['POST'])

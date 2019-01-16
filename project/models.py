@@ -35,26 +35,32 @@ class Incident:
 
 
 class User:
+    """
+    class for users
+    """
     def __init__(self, *args):
         self.user_id = len(users)+1
         self.first_name = args[0]
         self.last_name = args[1]
         self.other_names = args[2]
         self.email = args[3]
-        self.tel = args[4]
+        self.telephone = args[4]
         self.user_name = args[5]
         self.password = args[6]
         self.registered = datetime.datetime.now()
         self.isadmin = False
 
     def user_to_json(self):
+        """ 
+        method to turn user to dictionary
+        """
         return {
             "user_id": self.user_id,
             "First Name": self.first_name,
             "Last Name": self.last_name,
             "Other Names": self.other_names,
             "Email": self.email,
-            "Telephone": self.tel,
+            "Telephone": self.telephone,
             "user_name": self.user_name,
             "password": self.password,
             "Registered": self.registered,
