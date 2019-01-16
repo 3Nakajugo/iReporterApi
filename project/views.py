@@ -37,8 +37,8 @@ def register_user():
         email, password, user_name, telephone)
     if invalid_user:
         return jsonify({"status": 400, "message": "some fields are missing"}), 400
-    user = User(first_name, last_name, other_names,
-                email, telephone, user_name, password)
+    user = User(first_name=first_name, last_name=last_name, other_names=other_names,
+                email=email, telephone=telephone, user_name=user_name, password=password)
     user_record = user_cntr.create_user(user)
     if user_record:
         return jsonify({"message": "User has been created",
@@ -69,7 +69,7 @@ def create_incident():
     file = request_data.get('file')
     comment = request_data.get('comment')
     invalid_incident = incident_validator.validate_incident(created_by,
-                                                          incident_type, location, file, comment)
+                                                            incident_type, location, file, comment)
     if invalid_incident:
         return jsonify({"status": 400, "message": "some fields are empty"}), 400
     incident_obj = Incident(created_by,
