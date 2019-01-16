@@ -11,3 +11,5 @@ class UserController:
     def get_all_users(self):
         for user in users:
             return user
+    
+    

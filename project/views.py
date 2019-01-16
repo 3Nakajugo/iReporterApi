@@ -33,9 +33,9 @@ def register_user():
     telephone = request_data.get('telephone')
     user_name = request_data.get('user_name')
     password = request_data.get('password')
-    valid_user = incident_validator.validate_user_credentials(
+    invalid_user = incident_validator.validate_user_credentials(
         email, password, user_name, telephone)
-    if valid_user:
+    if invalid_user:
         return jsonify({"status": 400, "message": "some fields are missing"}), 400
     user = User(first_name, last_name, other_names,
                 email, telephone, user_name, password)
@@ -48,7 +48,7 @@ def register_user():
 @app.route('/api/v1/users', methods=['GET'])
 def get_user():
     """
-        method for creating user
+        method for getting all users
     """
     if len(users) > 0:
         all_users = user_cntr.get_all_users()
@@ -68,9 +68,9 @@ def create_incident():
     location = request_data.get('location')
     file = request_data.get('file')
     comment = request_data.get('comment')
-    valid_incident = incident_validator.validate_incident(created_by,
+    invalid_incident = incident_validator.validate_incident(created_by,
                                                           incident_type, location, file, comment)
-    if valid_incident:
+    if invalid_incident:
         return jsonify({"status": 400, "message": "some fields are empty"}), 400
     incident_obj = Incident(created_by,
                             incident_type, location, file, comment)
