@@ -19,7 +19,6 @@ class TestApi(unittest.TestCase):
         self.incident_missing = {
             "created_by": "edna",
             "incident_type": "redflag",
-            "location": " ",
             "file": "error.png",
             "comment": "jisckmsldkmspoll,ldjo"
         }
