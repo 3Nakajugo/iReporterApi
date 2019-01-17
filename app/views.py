@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_jwt_extended import JWTManager, create_access_token,jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 from .models.incident import Incident, incidents
 from .models.user import User, users
 from .validator import Validator
@@ -47,7 +47,8 @@ def register_user():
 
 
 @app.route('/api/v1/users', methods=['GET'])
-def get_user():
+@jwt_required
+def get_users():
     """
         method for getting all users
     """
@@ -74,6 +75,7 @@ def login():
 
 
 @app.route('/api/v1/incidents', methods=['POST'])
+@jwt_required
 def create_incident():
     """
     method for creating an incident
@@ -98,6 +100,7 @@ def create_incident():
 
 
 @app.route('/api/v1/incidents', methods=['GET'])
+@jwt_required
 def get_all_redflags():
     """
     method for getting all red flags
@@ -109,6 +112,7 @@ def get_all_redflags():
 
 
 @app.route('/api/v1/incidents/<int:incident_id>', methods=['GET'])
+@jwt_required
 def get_single_redflag(incident_id):
     """
     method for getting single redflag
@@ -121,6 +125,7 @@ def get_single_redflag(incident_id):
 
 
 @app.route('/api/v1/incidents/<int:incident_id>', methods=['DELETE'])
+@jwt_required
 def delete_single_redflag(incident_id):
     """
     method for deleting a single redflag
@@ -132,6 +137,7 @@ def delete_single_redflag(incident_id):
 
 
 @app.route('/api/v1/incidents/<int:incident_id>/location', methods=['PATCH'])
+@jwt_required
 def edit_location(incident_id):
     """
     method for editing location of a single redflag
@@ -147,15 +153,15 @@ def edit_location(incident_id):
 
 
 @app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
+@jwt_required
 def edit_comment(incident_id):
     """
     method for editing comment of a single redflag
     """
     edit_redflag = Incident.update(incident_id)
-    if edit_redflag:
-        edit_redflag[0]['comment'] = request.json.get(
-            'comment', edit_redflag[0]['comment'])
+    if not edit_redflag:
+        return jsonify({"status": 404, "error": "no incident with such an id"}), 404
+    edit_redflag[0]['comment'] = request.json.get(
+        'comment', edit_redflag[0]['comment'])
     if edit_redflag[0]['comment']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's comment"}]}), 200
-    return jsonify({"status": 404, "error": "no incident with such an id"}), 404
-

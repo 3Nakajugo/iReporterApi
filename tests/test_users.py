@@ -18,11 +18,32 @@ class TestUser(unittest.TestCase):
             "user_name": "edljlkjkljk",
             "password": "edna123"
         }
-        
+        self.incident = {
+            "created_by": "edna",
+            "incident_type": "redflag",
+            "location": "2123 13241",
+            "file": "error.png",
+            "comment": "jisckmsldkmspoll,ldjo"
+        }
+        self.credentials = {
+            "user_name": "ednamar",
+            "password": "edna123"
+        }
+        self.test_client.post(
+            '/api/v1/users/signup', data=json.dumps(self.user))
+        self.login_response = self.test_client.post(
+            '/api/v1/auth/login', data=json.dumps(self.credentials), content_type="application/json")
+        jwt_token = json.loads(self.login_response.data)["token"]
+        self.test_client.post(
+            '/api/v1/incidents', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.incident))
+
     def test_get_all_users_when_list_empty(self):
-        response = self.test_client.get(
-            '/api/v1/users')
+        jwt_token = json.loads(self.login_response.data)["token"]
+        response = self.test_client.get('/api/v1/users', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json")
+        response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data["message"], "all users")
 
     def test_register_user(self):
         response = self.test_client.post(
@@ -33,10 +54,11 @@ class TestUser(unittest.TestCase):
         self.assertIs(type(request_data), dict)
 
     def test_get_all_users(self):
-        response = self.test_client.post(
-            '/api/v1/users/signup', data=json.dumps(self.user))
-        response = self.test_client.get(
-            '/api/v1/users')
-        request_data = json.loads(response.data.decode())
+        jwt_token = json.loads(self.login_response.data)["token"]
+        response = self.test_client.post('/api/v1/users/signup', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.user))
+        response = self.test_client.get('/api/v1/users', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json")
+        response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
-        self.assertIs(type(request_data), dict)
+        self.assertIs(type(response_data), dict)

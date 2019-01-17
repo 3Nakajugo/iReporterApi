@@ -54,8 +54,3 @@ class User:
             if user["user_name"] == user_name and user["password"] == password:
                 return user
             return None
-
-    def check_user_exists(self, user_name):
-        for user in users:
-            if user["user_name"] == user_name:
-                return True
