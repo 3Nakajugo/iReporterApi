@@ -1,0 +1,8 @@
+[report]
+omit =
+    */__pycache__/*
+    *.pyc
+    */__init__.py
+    *__init__.py
+    */tests/__init__.py 
+   
