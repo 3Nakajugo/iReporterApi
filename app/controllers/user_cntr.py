@@ -10,3 +10,8 @@ class UserController:
 
     def get_all_users(self):
         return users
+
+    def check_user_exists(self, user_name):
+        for user in users:
+            if user["user_name"] == user_name:
+                return True

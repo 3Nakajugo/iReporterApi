@@ -6,6 +6,5 @@ omit =
     *__init__.py
     */project/views.py
     */project/validator.py
-    */project/models.py
     */tests/__init__.py 
     */project/controllers/*       

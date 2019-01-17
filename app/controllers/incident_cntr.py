@@ -1,4 +1,4 @@
-from project.models import Incident, incidents
+from ..models import Incident, incidents
 
 
 class IncidentCntr:

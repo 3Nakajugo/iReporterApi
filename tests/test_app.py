@@ -1,7 +1,7 @@
 import unittest
 import json
-from project.views import app
-from project.models import Incident, incidents
+from app.views import app
+from app.models import Incident, incidents
 
 
 class TestApi(unittest.TestCase):
@@ -112,24 +112,28 @@ class TestApi(unittest.TestCase):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident_missing))
         self.assertEqual(response.status_code, 400)
-    
+
     def test_get_all_users_when_list_empty(self):
-        pass
+        response = self.test_client.get(
+            '/api/v1/users')
+        self.assertEqual(response.status_code, 200)
 
     def test_register_user(self):
         response = self.test_client.post(
             '/api/v1/users/signup', data=json.dumps(self.user))
         request_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(request_data["message"],"User has been created")
-        self.assertIs(type(request_data),dict)
-    
+        self.assertEqual(request_data["message"], "User has been created")
+        self.assertIs(type(request_data), dict)
+
     def test_get_all_users(self):
+        response = self.test_client.post(
+            '/api/v1/users/signup', data=json.dumps(self.user))
         response = self.test_client.get(
             '/api/v1/users')
         request_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 200)
-        self.assertIs(type(request_data),dict)
+        self.assertIs(type(request_data), dict)
 
     # def test_edit_location_of_redlag_that_doesnot_exist(self):
     #     # response = self.test_client.post(
