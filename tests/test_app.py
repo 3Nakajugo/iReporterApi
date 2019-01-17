@@ -1,7 +1,6 @@
 import unittest
 import json
 from app.views import app
-from app.models import Incident, incidents
 
 
 class TestApi(unittest.TestCase):
@@ -33,6 +32,8 @@ class TestApi(unittest.TestCase):
             "user_name": "edljlkjkljk",
             "password": "edna123"
         }
+        self.test_client.post(
+            '/api/v1/incidents', data=json.dumps(self.incident))
 
     def tearDown(self):
         self.incident = None
@@ -66,7 +67,6 @@ class TestApi(unittest.TestCase):
     def test_get_all_when_list_is_empty(self):
         response = self.test_client.get('/api/v1/incidents')
         responce_data = json.loads(response.data)
-        print(responce_data)
         self.assertEqual(response.status_code, 200)
 
     def test_get_single_redflag_that_doesnot_exist(self):
@@ -76,8 +76,6 @@ class TestApi(unittest.TestCase):
     def test_get_single_redflag_that_exist(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident))
-        print(len(incidents))
-
         response = self.test_client.get('/api/v1/incidents/2')
         request_data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
@@ -99,8 +97,6 @@ class TestApi(unittest.TestCase):
         self.assertIs(type(request_data), dict)
 
     def test_delete_redflag_that_doesnot_exist(self):
-        response = self.test_client.post(
-            '/api/v1/incidents', data=json.dumps(self.incident))
         response = self.test_client.delete('/api/v1/incidents/5')
         request_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 404)
@@ -111,33 +107,23 @@ class TestApi(unittest.TestCase):
     def test_posting_missing_field(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident_missing))
+        response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["message"], "some fields are empty")
 
-    def test_get_all_users_when_list_empty(self):
-        response = self.test_client.get(
-            '/api/v1/users')
+
+    def test_edit_location_of_redlag_that_doesnot_exist(self):
+        edit_location = {"location": "ntinda"}
+        response = self.test_client.patch(
+            '/api/v1/incidents/78/location', content_type="application/json", data=json.dumps(edit_location))
+        self.assertEqual(response.status_code, 404)
+
+    def test_edit_location_of_redlag_that_exist(self):
+        response = self.test_client.post(
+            '/api/v1/incidents', data=json.dumps(self.incident))
+        edit_location = {"location": "ntinda"}
+        response = self.test_client.patch(
+            '/api/v1/incidents/2/location', content_type="application/json", data=json.dumps(edit_location))
         self.assertEqual(response.status_code, 200)
 
-    def test_register_user(self):
-        response = self.test_client.post(
-            '/api/v1/users/signup', data=json.dumps(self.user))
-        request_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(request_data["message"], "User has been created")
-        self.assertIs(type(request_data), dict)
 
-    def test_get_all_users(self):
-        response = self.test_client.post(
-            '/api/v1/users/signup', data=json.dumps(self.user))
-        response = self.test_client.get(
-            '/api/v1/users')
-        request_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 200)
-        self.assertIs(type(request_data), dict)
-
-    # def test_edit_location_of_redlag_that_doesnot_exist(self):
-    #     # response = self.test_client.post(
-    #     #     '/api/v1/incidents', data=json.dumps(self.incident))
-    #     self.edit_location = {"location": "ntinda"}
-    #     response = self.test_client.patch('/api/v1/incidents/0/location', data=json.dumps(self.edit_location))
-    #     self.assertEqual(response.status_code,404)

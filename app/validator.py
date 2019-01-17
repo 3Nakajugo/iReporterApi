@@ -1,5 +1,4 @@
 import re
-from app.models import incidents
 
 
 class Validator:
@@ -33,7 +32,5 @@ class Validator:
             return "please input email"
         if not telephone or telephone.isspace():
             return "please input telephone"
-        if not re.search("[0-9]", telephone):
-            return "contact must be digits"
         if len(user_name) < 5:
             return "username must be longer than  5 characters"

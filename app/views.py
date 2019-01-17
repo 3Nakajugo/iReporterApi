@@ -1,14 +1,15 @@
 from flask import Flask, jsonify, request
-from .models import Incident, incidents, User, users
-from .controllers.incident_cntr import IncidentCntr
-from .controllers.user_cntr import UserController
+from flask_jwt_extended import JWTManager, create_access_token,jwt_required
+from .models.incident import Incident, incidents
+from .models.user import User, users
 from .validator import Validator
 
-incident_controller = IncidentCntr()
-user_cntr = UserController()
+
 incident_validator = Validator()
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'edna123'
+jwt = JWTManager(app)
 
 
 @app.route('/api/v1/welcome')
@@ -39,7 +40,7 @@ def register_user():
         return jsonify({"status": 400, "message": "some fields are missing"}), 400
     user = User(first_name=first_name, last_name=last_name, other_names=other_names,
                 email=email, telephone=telephone, user_name=user_name, password=password)
-    user_record = user_cntr.create_user(user)
+    user_record = User.create(user)
     if user_record:
         return jsonify({"message": "User has been created",
                         "status": 201}), 201
@@ -50,11 +51,26 @@ def get_user():
     """
         method for getting all users
     """
-    if len(users) > 0:
-        all_users = user_cntr.get_all_users()
-        if all_users:
-            return jsonify({"data": all_users, "status": 200, "message": "all users"}), 200
-    return jsonify({"status": 200, "message": "No Users to display"}), 200
+    all_users = User.get_all_users()
+    if all_users is None:
+        return jsonify({"data": all_users, "status": 200, "message": "No Users to display"}), 200
+    return jsonify({"data": all_users, "status": 200, "message": "all users"}), 200
+
+
+@app.route('/api/v1/auth/login', methods=['POST'])
+def login():
+    """
+        method user login
+    """
+    request_data = request.get_json(force=True)
+    user_name = request_data.get('user_name')
+    password = request_data.get('password')
+
+    token = create_access_token(identity=user_name)
+    user_credentials = User.login(user_name, password)
+    if user_credentials is None:
+        return jsonify({"message": "no user with such credentials", "status": 401}), 401
+    return jsonify({"message": "successfully logged in", "status": 200, "token": token}), 200
 
 
 @app.route('/api/v1/incidents', methods=['POST'])
@@ -75,10 +91,10 @@ def create_incident():
     incident_obj = Incident(created_by,
                             incident_type, location, file, comment)
 
-    add_incident = incident_controller.create_incident(incident_obj)
+    add_incident = Incident.create(incident_obj)
     if add_incident:
         return jsonify({"status": 201, "data": [{"message": "incident {} has been created".format(incident_type)}]}), 201
-    return jsonify({"status": 400, "message": "could not create incident"}), 400
+    # return jsonify({"status": 400, "message": "could not create incident"}), 400
 
 
 @app.route('/api/v1/incidents', methods=['GET'])
@@ -86,7 +102,7 @@ def get_all_redflags():
     """
     method for getting all red flags
     """
-    all_incidents = incident_controller.get_all_redflags()
+    all_incidents = Incident.get_all_redflags()
     if all_incidents:
         return jsonify({"data": all_incidents, "status": 200, "message": "all incidents"}), 200
     return jsonify({"status": 200, "message": "No incidents to display"}), 200
@@ -98,7 +114,7 @@ def get_single_redflag(incident_id):
     method for getting single redflag
     """
 
-    single_redflag = incident_controller.get_single_redflag(incident_id)
+    single_redflag = Incident.get_single_redflag(incident_id)
     if single_redflag:
         return jsonify({"status": 200, "data": single_redflag}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
@@ -109,8 +125,7 @@ def delete_single_redflag(incident_id):
     """
     method for deleting a single redflag
     """
-    delete_single_redflag = incident_controller.delete_single_redflag(
-        incident_id)
+    delete_single_redflag = Incident.delete(incident_id)
     if delete_single_redflag:
         return jsonify({"status": 200, "data": [{"id": incident_id, "message": "red-flag record has been deleted"}]}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
@@ -121,14 +136,14 @@ def edit_location(incident_id):
     """
     method for editing location of a single redflag
     """
-    edit_redflag = incident_controller.update_location(incident_id)
-    if edit_redflag:
-        edit_redflag[0]['location'] = request.json.get(
-            'location', edit_redflag[0]['location'])
+    edit_redflag = Incident.update(incident_id)
+    if not edit_redflag:
+        return jsonify({"status": 404, "error": "no incident with such an id"}), 404
+    edit_redflag[0]['location'] = request.json.get(
+        'location', edit_redflag[0]['location'])
 
     if edit_redflag[0]['location']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
-    return jsonify({"status": 404, "error": "no incident with such an id"}), 404
 
 
 @app.route('/api/v1/incidents/<int:incident_id>/comment', methods=['PATCH'])
@@ -136,10 +151,11 @@ def edit_comment(incident_id):
     """
     method for editing comment of a single redflag
     """
-    edit_redflag = incident_controller.update_location(incident_id)
+    edit_redflag = Incident.update(incident_id)
     if edit_redflag:
         edit_redflag[0]['comment'] = request.json.get(
             'comment', edit_redflag[0]['comment'])
     if edit_redflag[0]['comment']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's comment"}]}), 200
     return jsonify({"status": 404, "error": "no incident with such an id"}), 404
+
