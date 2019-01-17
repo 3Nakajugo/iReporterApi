@@ -1,5 +1,4 @@
 import re
-from project.models import incidents
 
 
 class Validator:
@@ -25,13 +24,13 @@ class Validator:
             return "id should be an integer"
 
     def validate_user_credentials(self, email, password, user_name, telephone):
-        if len(user_name) < 5 or user_name == "":
-            return "username should be more than 5 characters long"
+        if not user_name or user_name.isspace():
+            return "username is missing"
         if not password or password.isspace():
             return "password is missing"
         if not email or email.isspace():
             return "please input email"
         if not telephone or telephone.isspace():
             return "please input telephone"
-        if not re.search("[0-9]", telephone):
-            return "contact format must be [07xx-xxxxxx],in digits with no white spaces"
+        if len(user_name) < 5:
+            return "username must be longer than  5 characters"

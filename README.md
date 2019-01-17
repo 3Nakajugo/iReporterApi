@@ -39,6 +39,9 @@ iReporter enables any/every citizen to bring any form of corruption to the notic
 
 ``` $ pytest ```
 
+## Heroku
+
+https://appreporter.herokuapp.com/api/v1/welcome
 
 
 ## End points

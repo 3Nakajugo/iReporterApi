@@ -1,37 +1,6 @@
 import datetime
 
-
-incidents = []
 users = []
-
-
-class Incident:
-    """class for incidents"""
-
-    def __init__(self, created_by, incident_type, location, file, comment):
-        self.incident_id = len(incidents)+1
-        self.date = datetime.date.today()
-        self.created_by = created_by
-        self.incident_type = incident_type
-        self.location = location
-        self.status = "draft"
-        self.file = file
-        self.comment = comment
-
-    def to_json(self):
-        """ 
-        method to turn incident to dictionary
-        """
-        return {
-            "incident_id": self.incident_id,
-            "date": self.date,
-            "created_by": self.created_by,
-            "incident_type": self.incident_type,
-            "location": self.location,
-            "status": self.status,
-            "file": self.file,
-            "comment": self.comment
-        }
 
 
 class User:
@@ -68,3 +37,20 @@ class User:
             "Is Admin": self.isadmin
 
         }
+
+    @staticmethod
+    def create(user):
+        new_user = user.user_to_json()
+        users.append(new_user)
+        return new_user
+
+    @staticmethod
+    def get_all_users():
+        return users
+
+    @staticmethod
+    def login(user_name, password):
+        for user in users:
+            if user["user_name"] == user_name and user["password"] == password:
+                return user
+            return None
