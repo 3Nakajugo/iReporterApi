@@ -25,7 +25,7 @@ class Validator:
             return "id should be an integer"
 
     def validate_user_credentials(self, email, password, user_name, telephone):
-        if not user_name or user_name.isspace:
+        if not user_name or user_name.isspace():
             return "username is missing"
         if not password or password.isspace():
             return "password is missing"
