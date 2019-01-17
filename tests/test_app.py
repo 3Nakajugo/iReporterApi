@@ -24,6 +24,15 @@ class TestApi(unittest.TestCase):
             "file": "error.png",
             "comment": "jisckmsldkmspoll,ldjo"
         }
+        self.user = {
+            "first_name": "edna",
+            "last_name": "mag",
+            "other_names": "eddiee",
+            "email": "ed@gmail",
+            "telephone": "9",
+            "user_name": "edljlkjkljk",
+            "password": "edna123"
+        }
 
     def tearDown(self):
         self.incident = None
@@ -98,17 +107,33 @@ class TestApi(unittest.TestCase):
         self.assertEqual(request_data["status"], 404)
         self.assertEqual(request_data["message"],
                          "no incident with such an id")
-    
+
     def test_posting_missing_field(self):
         response = self.test_client.post(
             '/api/v1/incidents', data=json.dumps(self.incident_missing))
         self.assertEqual(response.status_code, 400)
+    
+    def test_get_all_users_when_list_empty(self):
+        pass
 
-
+    def test_register_user(self):
+        response = self.test_client.post(
+            '/api/v1/users/signup', data=json.dumps(self.user))
+        request_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(request_data["message"],"User has been created")
+        self.assertIs(type(request_data),dict)
+    
+    def test_get_all_users(self):
+        response = self.test_client.get(
+            '/api/v1/users')
+        request_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 200)
+        self.assertIs(type(request_data),dict)
 
     # def test_edit_location_of_redlag_that_doesnot_exist(self):
-    #     response = self.test_client.post(
-    #         '/api/v1/incidents', data=json.dumps(self.incident))
+    #     # response = self.test_client.post(
+    #     #     '/api/v1/incidents', data=json.dumps(self.incident))
     #     self.edit_location = {"location": "ntinda"}
-    #     response = self.test_client.patch('/api/v1/incidents/6/location', data=json.dumps(self.edit_location))
+    #     response = self.test_client.patch('/api/v1/incidents/0/location', data=json.dumps(self.edit_location))
     #     self.assertEqual(response.status_code,404)

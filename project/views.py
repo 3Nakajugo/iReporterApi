@@ -42,7 +42,7 @@ def register_user():
     user_record = user_cntr.create_user(user)
     if user_record:
         return jsonify({"message": "User has been created",
-                        "status": 200}), 200
+                        "status": 201}), 201
 
 
 @app.route('/api/v1/users', methods=['GET'])

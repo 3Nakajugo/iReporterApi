@@ -9,5 +9,4 @@ class UserController:
         return new_user
 
     def get_all_users(self):
-        # for user in users:
         return users
