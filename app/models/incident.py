@@ -41,15 +41,14 @@ class Incident:
         return incidents
 
     @staticmethod
-    def get_all_redflags():
+    def get_all():
         """
         gets all redflags
         """
-        if len(incidents) > 0:
-            return incidents
+        return incidents
 
     @staticmethod
-    def get_single_redflag(incident_id):
+    def get_single(incident_id):
         """
         gets single redflags
         """
@@ -78,4 +77,3 @@ class Incident:
         if red_flag:
             return red_flag
         return None
-        

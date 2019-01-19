@@ -10,21 +10,30 @@ class TestUser(unittest.TestCase):
         """
         self.test_client = app.test_client()
         self.user = {
-            "first_name": "edna",
+            "first_name": "nakajugo",
             "last_name": "mag",
             "other_names": "eddiee",
             "email": "ed@gmail",
             "telephone": "9",
-            "user_name": "ednamar",
-            "password": "edna123"
+            "user_name": "nakajugo",
+            "password": "edna1234"
         }
-        self.invalid_user = {
+        self.user_invalid_username = {
             "first_name": "edna",
             "last_name": "mag",
             "other_names": "eddiee",
             "email": "ed@gmail",
             "telephone": "9",
             "user_name": "edl",
+            "password": "edna1234"
+        }
+        self.user_invalid_password = {
+            "first_name": "edna",
+            "last_name": "mag",
+            "other_names": "eddiee",
+            "email": "ed@gmail",
+            "telephone": "9",
+            "user_name": "nakajugo",
             "password": "edna123"
         }
         self.incident = {
@@ -38,53 +47,55 @@ class TestUser(unittest.TestCase):
             "user_name": "maredna",
             "password": "edna12"
         }
+        self.missing_login_credentials = {
+            "user_name": "",
+            "password": "edna12"
+        }
         self.credentials = {
             "user_name": "ednamar",
-            "password": "edna123"
+            "password": "edna1234"
         }
         self.test_client.post(
-            '/api/v1/users/signup', data=json.dumps(self.user))
+            '/api/v1/auth/signup', data=json.dumps(self.user))
         self.login_response = self.test_client.post(
             '/api/v1/auth/login', data=json.dumps(self.credentials), content_type="application/json")
         jwt_token = json.loads(self.login_response.data)["token"]
         self.test_client.post(
-            '/api/v1/incidents', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.incident))
+            '/api/v1/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.incident))
 
     def test_failed_login(self):
         response = self.test_client.post(
             '/api/v1/auth/login', data=json.dumps(self.wrong_credentials), content_type="application/json")
         self.assertEqual(response.status_code, 401)
 
-    def test_get_all_users_when_list_empty(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.get('/api/v1/users', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json")
-        response_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 200)
-        # self.assertEqual(response_data["message"], "No Users to display")
-
-    def test_register_user(self):
+    def test_login_empty_credentilas(self):
         response = self.test_client.post(
-            '/api/v1/users/signup', data=json.dumps(self.user))
-        request_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(request_data["message"], "User has been created")
-        self.assertIs(type(request_data), dict)
+            '/api/v1/auth/login', data=json.dumps(self.missing_login_credentials), content_type="application/json")
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["message"], "username Cannot be empty")
 
-    def test_get_all_users(self):
+    def test_get_all_users_when_not_admin(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/users/signup', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.user))
         response = self.test_client.get('/api/v1/users', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json")
+        self.assertEqual(response.status_code, 401)
+
+
+    def test_register_with_invalid_password(self):
+        response = self.test_client.post(
+            '/api/v1/auth/signup', data=json.dumps(self.user_invalid_password))
         response_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["message"],
+                         "password must be longer than 8 characters")
         self.assertIs(type(response_data), dict)
 
-    def test_invalid_user(self):
+    def test_register_with_invalid_username(self):
         response = self.test_client.post(
-            '/api/v1/users/signup', data=json.dumps(self.invalid_user))
-        request_data = json.loads(response.data.decode())
+            '/api/v1/auth/signup', data=json.dumps(self.user_invalid_username))
+        response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(request_data["message"], "some fields are missing")
-        self.assertIs(type(request_data), dict)
+        self.assertEqual(response_data["message"],
+                         "username must be longer than 5 characters")
+        self.assertIs(type(response_data), dict)

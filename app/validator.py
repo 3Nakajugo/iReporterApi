@@ -6,8 +6,15 @@ class Validator:
     method to validate incident
     """
 
-    def validate_incident(self, created_by, incident_type, location, file, comment):
+    class Validator:
+        """
+    validates incident
+    """
 
+    def validate_incident(self, created_by, incident_type, location, file, comment):
+        """
+        validates create incident
+        """
         if not created_by or created_by.isspace():
             return "Name of creator is missing"
         if not incident_type or incident_type.isspace():
@@ -19,11 +26,19 @@ class Validator:
         if not comment or comment.isspace():
             return"comment is missing"
 
-    def validate_incidentid(self, incident_id):
-        if not isinstance(incident_id, int):
-            return "id should be an integer"
+    def validate_login(self, user_name, password):
+        """
+        validates login user
+        """
+        if not user_name or user_name.isspace():
+            return "username Cannot be empty"
+        if not password or password.isspace():
+            return "password cannot be empty"
 
     def validate_user_credentials(self, email, password, user_name, telephone):
+        """
+        validates create user
+        """
         if not user_name or user_name.isspace():
             return "username is missing"
         if not password or password.isspace():
@@ -32,5 +47,18 @@ class Validator:
             return "please input email"
         if not telephone or telephone.isspace():
             return "please input telephone"
+        if not re.search("[0-9]", telephone):
+            return "contact must be digits"
         if len(user_name) < 5:
-            return "username must be longer than  5 characters"
+            return "username must be longer than 5 characters"
+        if len(password) < 8:
+            return "password must be longer than 8 characters"
+
+    def check_id(self, incident_id):
+        """
+        validates incident id
+        """
+        try:
+            type(incident_id) == int
+        except Exception:
+            return "Input should be an interger"

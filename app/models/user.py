@@ -54,3 +54,15 @@ class User:
             if user["user_name"] == user_name and user["password"] == password:
                 return user
             return None
+
+    @staticmethod
+    def check_user_exists(user_name, password):
+        """ 
+        checks if user exists
+        """
+        for user in users:
+            if user["user_name"] == user_name:
+                return "user with username already exists"
+            elif user["password"] == password:
+                return "user with password already exists"
+            return False
