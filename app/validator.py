@@ -54,11 +54,26 @@ class Validator:
         if len(password) < 8:
             return "password must be longer than 8 characters"
 
-    def check_id(self, incident_id):
-        """
-        validates incident id
-        """
-        try:
-            type(incident_id) == int
-        except Exception:
-            return "Input should be an interger"
+    def validate_email(self, email):
+        valid_email = re.compile(
+            r"(^[a-zA-Z0-9_.]+@[a-zA-Z0-9]+\.[a-z]+$)")
+        if not valid_email.match(email):
+            return "please input valid email"
+
+    def validate_names(self, first_name, last_name, other_names):
+        if not first_name:
+            return "first_name is missing"
+        if not last_name:
+            return "last_name is missing"
+        if not other_names:
+            return "other_name is missing"
+        if not first_name.isalpha():
+            return "firstname should be alphabetical characters"
+        if not last_name.isalpha():
+            return "firstname should be alphabetical characters"
+        if not other_names.isalpha():
+            return "firstname should be alphabetical characters"
+        if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
+            return "names must not exceed 15 characters"
+
+

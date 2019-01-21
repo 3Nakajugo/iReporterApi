@@ -41,11 +41,24 @@ class Incident:
         return incidents
 
     @staticmethod
-    def get_all():
+    def get_all(incident_type):
         """
-        gets all redflags
+        gets all incident
         """
-        return incidents
+        redflags_list = []
+        interventions_list = []
+        for incident in incidents:
+            if incident_type == "redflag":
+                redflags_list.append(incident)
+            elif incident_type == "intervention":
+                interventions_list.append(incident)
+        if incident_type == "redflag"and redflags_list:
+            return redflags_list
+        elif incident_type == "intervention" and interventions_list:
+            return interventions_list
+        else:
+            return None
+        
 
     @staticmethod
     def get_single(incident_id):
@@ -72,8 +85,8 @@ class Incident:
         """
         updates single  redflags
         """
-        red_flag = [
+        incident = [
             incident for incident in incidents if incident['incident_id'] == incident_id]
-        if red_flag:
-            return red_flag
+        if incident:
+            return incident
         return None

@@ -41,6 +41,15 @@ def register_user():
     user_exists = User.check_user_exists(user_name, password)
     if user_exists:
         return jsonify({"status": 400, "message": user_exists}), 400
+    invalid_email = incident_validator.validate_email(email)
+    if invalid_email:
+        return jsonify({"status": 400, "message": invalid_email}), 400
+    invalid_names=incident_validator.validate_names(first_name,last_name,other_names)
+    if invalid_names:
+        return jsonify({"status": 400, "message": invalid_names}), 400
+    # name_not_alpha = incident_validator.validate_name_input(first_name)
+    # if name_not_alpha:
+    #     return jsonify({"status": 400, "message": name_not_alpha}), 400
     user = User(first_name=first_name, last_name=last_name, other_names=other_names,
                 email=email, telephone=telephone, user_name=user_name, password=password)
     user_record = User.create(user)
@@ -92,7 +101,7 @@ def create_redflag():
     """
     request_data = request.get_json(force=True)
     created_by = request_data.get('created_by')
-    incident_type = request_data.get('incident_type')
+    incident_type = "redflag"
     location = request_data.get('location')
     file = request_data.get('file')
     comment = request_data.get('comment')
@@ -114,9 +123,9 @@ def get_all_redflags():
     """
     gets all red flags
     """
-    all_redflags = Incident.get_all()
+    all_redflags = Incident.get_all("redflag")
     if all_redflags is None:
-        return jsonify({"status": 200, "all Red flags": all_redflags, "message": "No Redflags to display"}), 200
+        return jsonify({"status": 200, "all Red flags": [], "message": "No Redflags to display"}), 200
     return jsonify({"data": all_redflags, "status": 200, "message": "all Redflags"}), 200
 
 
@@ -126,9 +135,6 @@ def get_single_redflag(incident_id):
     """
     gets single redflag
     """
-    invalid_id = incident_validator.check_id(incident_id)
-    if invalid_id:
-        return jsonify({"status": 400, "message": invalid_id}), 400
     single_redflag = Incident.get_single(incident_id)
     if single_redflag:
         return jsonify({"status": 200, "data": single_redflag}), 200
@@ -176,3 +182,5 @@ def edit_comment(incident_id):
         'comment', edit_redflag[0]['comment'])
     if edit_redflag[0]['comment']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's comment"}]}), 200
+
+
