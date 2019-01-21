@@ -53,6 +53,8 @@ class Validator:
             return "username must be longer than 5 characters"
         if len(password) < 8:
             return "password must be longer than 8 characters"
+        if not telephone.isdigit():
+            return "phone number should be intergers"
 
     def validate_email(self, email):
         valid_email = re.compile(
