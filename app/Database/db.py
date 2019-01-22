@@ -21,11 +21,11 @@ class Database:
         """,
             """CREATE TABLE IF NOT EXISTS redflags(incident_id SERIAL PRIMARY KEY NOT NULL,
             incident_type VARCHAR DEFAULT 'redflag' , date TIMESTAMPTZ DEFAULT NOW(),
-            location VARCHAR NOT NULL, status VARCHAR DEFAULT 'draft',
+            location INT NOT NULL, status VARCHAR DEFAULT 'draft',
             file VARCHAR ,comment VARCHAR NOT NULL
         )""",
             """CREATE TABLE IF NOT EXISTS interventions(incident_id SERIAL PRIMARY KEY NOT NULL,
-            incident_type VARCHAR NOT NULL, date TIMESTAMPTZ DEFAULT NOW(),location VARCHAR NOT NULL, status VARCHAR,
+            incident_type VARCHAR DEFAULT 'intervention', date TIMESTAMPTZ DEFAULT NOW(),location INT NOT NULL, status VARCHAR,
             file VARCHAR ,comment VARCHAR NOT NULL
         )"""
         )
@@ -50,20 +50,53 @@ class Database:
         creates redflag in database table redflags
         """
         query = (
-            """INSERT INTO redflags( location, file, comment) VALUES ('{}','{}','{}')RETURNING *""".format(location, file, comment))
+            """INSERT INTO redflags( location, file, comment) VALUES ('{}','{}','{}')RETURNING incident_id""".format(location, file, comment))
         self.cursor_obj.execute(query)
-        returned_record = self.cursor_obj.fetchone()
-        return returned_record
+        reflag_record = self.cursor_obj.fetchone()
+        return reflag_record
+
+    def get_all_redflags(self):
+        """
+        gets all redflags from table redflags
+        """
+        query = """SELECT * FROM redflags"""
+        self.cursor_obj.execute(query)
+        all_redflags = self.cursor_obj.fetchall()
+        return all_redflags
+
+    def get_single_redflag(self, incident_id):
+        """
+        gets single redflag from table redflags
+        """
+        query = (
+            """SELECT * FROM redflags WHERE incident_id = '{}' """.format(incident_id))
+        self.cursor_obj.execute(query)
+        single_redflag = self.cursor_obj.fetchone()
+        return single_redflag
+
+    def update_location(self, location, incident_id):
+        """updates location of redflag"""
+        query = ("""UPDATE location SET location = '{}') WHERE incident_id = '{}'""".format(
+            location, incident_id))
+        self.cursor_obj.execute(query)
+        updated_location = self.cursor_obj.rowcount
+        return updated_location
 
     def create_intervention(self, location, file, comment):
         """
         creates intervention in database table intervention
         """
         query = (
-            """INSERT INTO redflags( location, file, comment) VALUES ('{}','{}','{}')RETURNING *""".format(location, file, comment))
+            """INSERT INTO interventions( location, file, comment) VALUES ('{}','{}','{}')RETURNING incident_id """.format(location, file, comment))
         self.cursor_obj.execute(query)
-        returned_record = self.cursor_obj.fetchone()
-        return returned_record
+        intervention_record = self.cursor_obj.fetchone()
+        return intervention_record
+
+    def get_user_by_username(self, user_name):
+        query = ("""SELECT * FROM users WHERE user_name='{}'""".format(user_name))
+        self.cursor_obj.execute(query)
+        user_exists = self.cursor_obj.fetchone()
+        return user_exists
 
     def login(self, username, password):
         """

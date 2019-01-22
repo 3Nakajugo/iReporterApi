@@ -12,13 +12,14 @@ class Validator:
         validates create incident
         """
         if not (isinstance(location, int)):
-            return "location must be an integer"
-        if not location or location.isspace():
+            return "location must be an integer of less then 9 integers"
+        if not location:
             return "location is missing"
         if not file or file.isspace():
             return "An image or video is missing"
         if not comment or comment.isspace():
             return"comment is missing"
+
 
     def validate_login(self, user_name, password):
         """
@@ -71,3 +72,5 @@ class Validator:
             return "other_name should be alphabetical characters"
         if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
             return "names must not exceed 15 characters"
+    
+  
