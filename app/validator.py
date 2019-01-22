@@ -20,7 +20,6 @@ class Validator:
         if not comment or comment.isspace():
             return"comment is missing"
 
-
     def validate_login(self, user_name, password):
         """
         validates login user
@@ -29,6 +28,17 @@ class Validator:
             return "username Cannot be empty"
         if not password or password.isspace():
             return "password cannot be empty"
+
+    def edit_location(self, location):
+        """
+        validates edit location
+        """
+        if not (isinstance(location, int)):
+            return "location must be an integer of less then 9 integers"
+        if not location:
+            return "location is missing"
+        if location == "":
+            return "location is missing"
 
     def validate_user_credentials(self, email, password, user_name, telephone):
         """
@@ -72,5 +82,3 @@ class Validator:
             return "other_name should be alphabetical characters"
         if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
             return "names must not exceed 15 characters"
-    
-  
