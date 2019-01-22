@@ -149,8 +149,7 @@ def get_all_redflags():
     """
     all_redflags = database_obj.get_all_redflags()
     if all_redflags is None:
-        return jsonify({"status": 200, "all Red flags": [], "message":
-                        "No Redflags to display"}), 200
+        return jsonify({"status": 200,  "message": "No Redflags to display"}), 200
     return jsonify({"data": all_redflags, "status": 200, "message": "all Redflags"}), 200
 
 
@@ -205,3 +204,11 @@ def edit_comment(incident_id):
         'comment', edit_redflag[0]['comment'])
     if edit_redflag[0]['comment']:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's comment"}]}), 200
+
+
+@app.route('/api/v2/interventions', methods=['GET'])
+def all_interventions():
+    all_records = database_obj.get_all_interventions()
+    if all_records is None:
+        return jsonify({"status": 200,  "message": "No interventions to display"}), 200
+    return jsonify({"data": all_records, "status": 200, "message": "all interventions"}), 200
