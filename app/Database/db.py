@@ -25,7 +25,8 @@ class Database:
             file VARCHAR ,comment VARCHAR NOT NULL
         )""",
             """CREATE TABLE IF NOT EXISTS interventions(incident_id SERIAL PRIMARY KEY NOT NULL,
-            incident_type VARCHAR DEFAULT 'intervention', date TIMESTAMPTZ DEFAULT NOW(),location INT NOT NULL, status VARCHAR,
+            incident_type VARCHAR DEFAULT 'intervention', date TIMESTAMPTZ DEFAULT NOW(),
+            location INT NOT NULL, status VARCHAR DEFAULT 'draft',
             file VARCHAR ,comment VARCHAR NOT NULL
         )"""
         )
@@ -107,3 +108,12 @@ class Database:
         self.cursor_obj.execute(query)
         intervention_record = self.cursor_obj.fetchone()
         return intervention_record
+
+    def get_all_interventions(self):
+            """
+            gets all interventions from table interventions
+            """
+            query = """SELECT * FROM interventions"""
+            self.cursor_obj.execute(query)
+            all_interventions = self.cursor_obj.fetchall()
+            return all_interventions
