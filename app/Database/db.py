@@ -55,6 +55,22 @@ class Database:
         reflag_record = self.cursor_obj.fetchone()
         return reflag_record
 
+    def get_user_by_username(self, user_name):
+        query = ("""SELECT * FROM users WHERE user_name='{}'""".format(user_name))
+        self.cursor_obj.execute(query)
+        user_exists = self.cursor_obj.fetchone()
+        return user_exists
+
+    def login(self, username, password):
+        """
+        logs in user that exists inthe database
+        """
+        query = (
+            """ SELECT * FROM users WHERE user_name='{}'AND password='{}' """).format(username, password)
+        self.cursor_obj.execute(query)
+        returned_user = self.cursor_obj.fetchone()
+        return returned_user
+
     def get_all_redflags(self):
         """
         gets all redflags from table redflags
@@ -75,7 +91,7 @@ class Database:
         return single_redflag
 
     def update_location(self, location, incident_id):
-        """updates location of redflag"""
+        """updates location """
         query = ("""UPDATE location SET location = '{}') WHERE incident_id = '{}'""".format(
             location, incident_id))
         self.cursor_obj.execute(query)
@@ -91,19 +107,3 @@ class Database:
         self.cursor_obj.execute(query)
         intervention_record = self.cursor_obj.fetchone()
         return intervention_record
-
-    def get_user_by_username(self, user_name):
-        query = ("""SELECT * FROM users WHERE user_name='{}'""".format(user_name))
-        self.cursor_obj.execute(query)
-        user_exists = self.cursor_obj.fetchone()
-        return user_exists
-
-    def login(self, username, password):
-        """
-        logs in user that exists inthe database
-        """
-        query = (
-            """ SELECT * FROM users WHERE user_name='{}'AND password='{}' """).format(username, password)
-        self.cursor_obj.execute(query)
-        returned_user = self.cursor_obj.fetchone()
-        return returned_user

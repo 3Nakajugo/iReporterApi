@@ -17,7 +17,7 @@ database = Database()
 database.create_tables()
 
 
-@app.route('/api/v1/welcome')
+@app.route('/api/v2/welcome')
 def index():
     """
         method for home page
@@ -26,7 +26,7 @@ def index():
                     "status": 200}), 200
 
 
-@app.route('/api/v1/auth/signup', methods=['POST'])
+@app.route('/api/v2/auth/signup', methods=['POST'])
 def register_user():
     """
         method for creating user
@@ -76,7 +76,7 @@ def register_user():
     # return jsonify({"data": all_users, "status": 200, "role": get_role, "message": "all users"}), 200
 
 
-@app.route('/api/v1/auth/login', methods=['POST'])
+@app.route('/api/v2/auth/login', methods=['POST'])
 def login():
     """
         method user login
@@ -104,7 +104,7 @@ def login():
                     "token": token.decode('utf-8'), "data": [{"user": user_credentials}]}), 200
 
 
-@app.route('/api/v1/redflags', methods=['POST'])
+@app.route('/api/v2/redflags', methods=['POST'])
 def create_redflag():
     """
     creates redflag
@@ -123,7 +123,7 @@ def create_redflag():
         return jsonify({"status": 201, "message": "Redflag has been created", "data": [incident_obj]}), 201
 
 
-@app.route('/api/v1/interventions', methods=['POST'])
+@app.route('/api/v2/interventions', methods=['POST'])
 def create_intervention():
     """
     creates intervention
@@ -142,7 +142,7 @@ def create_intervention():
         return jsonify({"status": 201, "message": "intervention has been created", "data": [incident_obj]}), 201
 
 
-@app.route('/api/v1/redflags', methods=['GET'])
+@app.route('/api/v2/redflags', methods=['GET'])
 def get_all_redflags():
     """
     gets all red flags
@@ -154,7 +154,7 @@ def get_all_redflags():
     return jsonify({"data": all_redflags, "status": 200, "message": "all Redflags"}), 200
 
 
-@app.route('/api/v1/redflags/<int:incident_id>', methods=['GET'])
+@app.route('/api/v2/redflags/<int:incident_id>', methods=['GET'])
 def get_single_redflag(incident_id):
     """
     gets single redflag
@@ -165,7 +165,7 @@ def get_single_redflag(incident_id):
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
 
 
-@app.route('/api/v1/redflags/<int:incident_id>', methods=['DELETE'])
+@app.route('/api/v2/redflags/<int:incident_id>', methods=['DELETE'])
 def delete_single_redflag(incident_id):
     """
      deletes a single redflag
@@ -176,22 +176,24 @@ def delete_single_redflag(incident_id):
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
 
 
-@app.route('/api/v1/redflags/<int:incident_id>/location', methods=['PATCH'])
+@app.route('/api/v2/redflags/<int:incident_id>/location', methods=['PATCH'])
 def edit_location(incident_id, location):
     """
     edits location of a single redflag
     """
-    edit_redflag = database_obj.update_location(location, incident_id)
-    if not edit_redflag:
-        return jsonify({"status": 404, "error": "no incident with such an id"}), 404
-    edit_redflag[0]['location'] = request.json.get(
-        'location', edit_redflag[0]['location'])
+    edit_redflag_location = request.get_json(force=True)
+    location = edit_redflag_location.get("location")
+    valid_edit = incident_validator.edit_location(location)
+    if not valid_edit:
+        return jsonify({"status": 400, "message": valid_edit}), 400
+    edited_location = database_obj.update_location(location, incident_id)
+    if edited_location:
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id,
+                                                 "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 200, "message": "location was updated"}), 200
 
-    if edit_redflag[0]['location']:
-        return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's location"}]}), 200
 
-
-@app.route('/api/v1/redflags/<int:incident_id>/comment', methods=['PATCH'])
+@app.route('/api/v2/redflags/<int:incident_id>/comment', methods=['PATCH'])
 def edit_comment(incident_id):
     """
     method for editing comment of a single redflag
