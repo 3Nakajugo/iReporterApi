@@ -58,7 +58,6 @@ class Incident:
             return interventions_list
         else:
             return None
-        
 
     @staticmethod
     def get_single(incident_id):

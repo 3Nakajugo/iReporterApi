@@ -2,25 +2,24 @@ import re
 
 
 class Validator:
-  
+
     """
     validates incident
     """
 
-    def validate_incident(self, created_by, incident_type, location, file, comment):
+    def validate_incident(self, location, file, comment):
         """
         validates create incident
         """
-        if not created_by or created_by.isspace():
-            return "Name of creator is missing"
-        if not incident_type or incident_type.isspace():
-            return "please mark the incident as redflag or intervention"
-        if not location or location.isspace():
+        if not (isinstance(location, int)):
+            return "location must be an integer of less then 9 integers"
+        if not location:
             return "location is missing"
         if not file or file.isspace():
             return "An image or video is missing"
         if not comment or comment.isspace():
             return"comment is missing"
+
 
     def validate_login(self, user_name, password):
         """
@@ -43,12 +42,14 @@ class Validator:
             return "please input email"
         if not telephone or telephone.isspace():
             return "please input telephone"
+        if not telephone.isdigit():
+            return "phone number should be intergers"
+        if len(telephone) is not 10:
+            return "Phone number must be longer than 10 characters"
         if len(user_name) < 5:
             return "username must be longer than 5 characters"
         if len(password) < 8:
             return "password must be longer than 8 characters"
-        if not telephone.isdigit():
-            return "phone number should be intergers"
 
     def validate_email(self, email):
         valid_email = re.compile(
@@ -66,8 +67,10 @@ class Validator:
         if not first_name.isalpha():
             return "firstname should be alphabetical characters"
         if not last_name.isalpha():
-            return "firstname should be alphabetical characters"
+            return "last_name should be alphabetical characters"
         if not other_names.isalpha():
-            return "firstname should be alphabetical characters"
+            return "other_name should be alphabetical characters"
         if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
             return "names must not exceed 15 characters"
+    
+  
