@@ -2,12 +2,8 @@ import re
 
 
 class Validator:
+  
     """
-    method to validate incident
-    """
-
-    class Validator:
-        """
     validates incident
     """
 
@@ -75,5 +71,3 @@ class Validator:
             return "firstname should be alphabetical characters"
         if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
             return "names must not exceed 15 characters"
-
-

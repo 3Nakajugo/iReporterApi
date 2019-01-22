@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager, create_access_token, jwt_required, ge
 from .models.incident import Incident, incidents
 from .models.user import User, users
 from .validator import Validator
+from .Database.db import Database
 
 
 incident_validator = Validator()
@@ -10,6 +11,8 @@ incident_validator = Validator()
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'edna123'
 jwt = JWTManager(app)
+database = Database()
+database.create_tables()
 
 
 @app.route('/api/v1/welcome')
