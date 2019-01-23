@@ -24,7 +24,7 @@ def index():
     """
         method for home page
     """
-    return jsonify({"message": "Welcome to iReporter",
+    return jsonify({"message": "Welcome to iReporter application",
                     "status": 200}), 200
 
 
@@ -110,7 +110,6 @@ def create_intervention():
     creates intervention
     """
     request_data = request.get_json(force=True)
-    # created_by = request_data.get('created_by')
     location = request_data.get('location')
     file = request_data.get('file')
     comment = request_data.get('comment')
