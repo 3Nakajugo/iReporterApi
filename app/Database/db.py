@@ -110,10 +110,20 @@ class Database:
         return intervention_record
 
     def get_all_interventions(self):
-            """
-            gets all interventions from table interventions
-            """
-            query = """SELECT * FROM interventions"""
-            self.cursor_obj.execute(query)
-            all_interventions = self.cursor_obj.fetchall()
-            return all_interventions
+        """
+        gets all interventions from table interventions
+        """
+        query = """SELECT * FROM interventions"""
+        self.cursor_obj.execute(query)
+        all_interventions = self.cursor_obj.fetchall()
+        return all_interventions
+
+    def get_single_intervention(self, incident_id):
+        """
+        gets single intervention
+        """
+        query = (
+            """SELECT * FROM interventions WHERE incident_id = '{}' """.format(incident_id))
+        self.cursor_obj.execute(query)
+        single_intervention = self.cursor_obj.fetchone()
+        return single_intervention

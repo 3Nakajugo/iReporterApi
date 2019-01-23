@@ -167,7 +167,7 @@ def get_single_redflag(incident_id):
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['DELETE'])
 def delete_single_redflag(incident_id):
     """
-     deletes a single redflag
+    deletes a single redflag
     """
     delete_single_redflag = Incident.delete(incident_id)
     if delete_single_redflag:
@@ -208,7 +208,20 @@ def edit_comment(incident_id):
 
 @app.route('/api/v2/interventions', methods=['GET'])
 def all_interventions():
+    """
+    gets all interventions
+    """
     all_records = database_obj.get_all_interventions()
     if all_records is None:
         return jsonify({"status": 200,  "message": "No interventions to display"}), 200
     return jsonify({"data": all_records, "status": 200, "message": "all interventions"}), 200
+
+@app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
+def get_single_intervention(incident_id):
+    """
+    gets single intervention 
+    """
+    single_intervention = database_obj.get_single_intervention(incident_id)
+    if single_intervention:
+        return jsonify({"status": 200, "data": [single_intervention]}), 200
+    return jsonify({"status": 404, "message": "no incident with such an id"}), 404
