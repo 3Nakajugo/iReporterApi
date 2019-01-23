@@ -37,7 +37,7 @@ class Database:
         """
         creates user in database table users
         """
-        query = ("""INSERT INTO users(first_name, last_name, other_names, email, telephone, user_name, password) VALUES ('{}','{}','{}','{}','{}','{}','{}')RETURNING user_id""".format(
+        query = ("""INSERT INTO users(first_name, last_name, other_names, email, telephone, user_name, password) VALUES ('{}','{}','{}','{}','{}','{}','{}')RETURNING user_name """.format(
             first_name, last_name, other_names, email, telephone, user_name, password))
         self.cursor_obj.execute(query)
         returned_record = self.cursor_obj.fetchone()
@@ -53,7 +53,7 @@ class Database:
         query = (
             """INSERT INTO redflags( location, file, comment) VALUES ('{}','{}','{}')RETURNING incident_id""".format(location, file, comment))
         self.cursor_obj.execute(query)
-        reflag_record = self.cursor_obj.fetchone()
+        reflag_record = self.cursor_obj.fetchall()
         return reflag_record
 
     def get_user_by_username(self, user_name):
