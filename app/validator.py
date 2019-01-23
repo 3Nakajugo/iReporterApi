@@ -33,12 +33,11 @@ class Validator:
         """
         validates edit location
         """
-        if not (isinstance(location, int)):
-            return "location must be an integer of less then 9 integers"
         if not location:
             return "location is missing"
-        if location == "":
-            return "location is missing"
+        if not (isinstance(location, int)):
+            return "location must be an integer of less then 9 integers"
+            
 
     def validate_user_credentials(self, email, password, user_name, telephone):
         """
@@ -55,7 +54,7 @@ class Validator:
         if not telephone.isdigit():
             return "phone number should be intergers"
         if len(telephone) is not 10:
-            return "Phone number must be longer than 10 characters"
+            return "Phone number must be 10 characters"
         if len(user_name) < 5:
             return "username must be longer than 5 characters"
         if len(password) < 8:
