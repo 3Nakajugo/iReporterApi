@@ -95,7 +95,6 @@ def create_redflag():
     creates redflag
     """
     request_data = request.get_json(force=True)
-    # created_by = request_data.get('created_by')
     location = request_data.get('location')
     file = request_data.get('file')
     comment = request_data.get('comment')
@@ -161,14 +160,14 @@ def delete_single_redflag(incident_id):
 
 
 @app.route('/api/v2/redflags/<int:incident_id>/location', methods=['PATCH'])
-def edit_location(incident_id, location):
+def edit_location(incident_id):
     """
     edits location of a single redflag
     """
     edit_redflag_location = request.get_json(force=True)
     location = edit_redflag_location.get("location")
     valid_edit = incident_validator.edit_location(location)
-    if not valid_edit:
+    if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
     edited_location = database_obj.update_location(location, incident_id)
     if edited_location:
@@ -197,9 +196,9 @@ def all_interventions():
     gets all interventions
     """
     all_records = database_obj.get_all_interventions()
-    if all_records is None:
-        return jsonify({"status": 200,  "message": "No interventions to display"}), 200
-    return jsonify({"data": all_records, "status": 200, "message": "all interventions"}), 200
+    if all_records:
+        return jsonify({"data": all_records, "status": 200, "message": "all interventions"}), 200
+    return jsonify({"status": 200,  "message": "No interventions to display"}), 200
 
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
@@ -210,4 +209,16 @@ def get_single_intervention(incident_id):
     single_intervention = database_obj.get_single_intervention(incident_id)
     if single_intervention:
         return jsonify({"status": 200, "data": [single_intervention]}), 200
-    return jsonify({"status": 404, "message": "no incident with such an id"}), 404
+    return jsonify({"status": 404, "message": "no incident with such an id"}),
+
+
+@app.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
+def delete_single_interevention(incident_id):
+    """
+    deletes single intervention
+    """
+    incident = database_obj.get_single_intervention(incident_id)
+    if incident:
+        database_obj.delete_intervention(incident_id)
+        return jsonify({"status": 200, "message": "intervention was deleted"}), 200
+    return jsonify({"status": 404, "message": "no incident with such an id"}),404

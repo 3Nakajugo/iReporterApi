@@ -93,10 +93,10 @@ class Database:
 
     def update_location(self, location, incident_id):
         """updates location """
-        query = ("""UPDATE location SET location = '{}') WHERE incident_id = '{}'""".format(
+        query = ("""UPDATE redflags SET location = {} WHERE incident_id = {} """.format(
             location, incident_id))
         self.cursor_obj.execute(query)
-        updated_location = self.cursor_obj.rowcount
+        updated_location = self.cursor_obj
         return updated_location
 
     def create_intervention(self, location, file, comment):
@@ -123,7 +123,16 @@ class Database:
         gets single intervention
         """
         query = (
-            """SELECT * FROM interventions WHERE incident_id = '{}' """.format(incident_id))
+            """SELECT * FROM interventions WHERE incident_id = {} """.format(incident_id))
         self.cursor_obj.execute(query)
         single_intervention = self.cursor_obj.fetchone()
         return single_intervention
+
+    def delete_intervention(self, incident_id):
+        """
+        deletes intervention from table interventions
+        """
+        
+        query = (
+            """ DELETE FROM interventions WHERE incident_id = '{}'""".format(incident_id))
+        self.cursor_obj.execute(query)
