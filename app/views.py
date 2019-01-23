@@ -61,21 +61,6 @@ def register_user():
                     "status": 201, "message": "user has been created"}), 201
 
 
-# @app.route('/api/v1/users', methods=['GET'])
-# def get_users():
-#     """
-#         method for getting all users
-#     """
-
-    # get_role = get_jwt_identity()["Is Admin"]
-    # if not get_role:
-    #     return jsonify({"status": 401, "message": "Unauthorized access"}), 401
-    # all_users = User.get_all_users()
-    # if all_users is None:
-    #     return jsonify({"data": all_users, "status": 200, "message": "No Users to display"}), 200
-    # return jsonify({"data": all_users, "status": 200, "role": get_role, "message": "all users"}), 200
-
-
 @app.route('/api/v2/auth/login', methods=['POST'])
 def login():
     """
@@ -167,7 +152,7 @@ def get_single_redflag(incident_id):
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['DELETE'])
 def delete_single_redflag(incident_id):
     """
-     deletes a single redflag
+    deletes a single redflag
     """
     delete_single_redflag = Incident.delete(incident_id)
     if delete_single_redflag:
@@ -208,7 +193,21 @@ def edit_comment(incident_id):
 
 @app.route('/api/v2/interventions', methods=['GET'])
 def all_interventions():
+    """
+    gets all interventions
+    """
     all_records = database_obj.get_all_interventions()
     if all_records is None:
         return jsonify({"status": 200,  "message": "No interventions to display"}), 200
     return jsonify({"data": all_records, "status": 200, "message": "all interventions"}), 200
+
+
+@app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
+def get_single_intervention(incident_id):
+    """
+    gets single intervention 
+    """
+    single_intervention = database_obj.get_single_intervention(incident_id)
+    if single_intervention:
+        return jsonify({"status": 200, "data": [single_intervention]}), 200
+    return jsonify({"status": 404, "message": "no incident with such an id"}), 404
