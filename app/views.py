@@ -1,18 +1,20 @@
 from flask import Flask, jsonify, request
+from werkzeug.security import generate_password_hash,check_password_hash
 import jwt
 import datetime
-from os import environ
 from .models.incident import Incident
 from .models.user import User, users
 from .validator import Validator
+from .helpers import encode_token, auth
 from .Database.db import Database
+
 
 
 incident_validator = Validator()
 database_obj = Database()
 
 app = Flask(__name__)
-jwt_secret_key = environ.get("JWT_SECRET_KEY", "edna1234")
+
 database = Database()
 database.create_tables()
 
@@ -22,7 +24,7 @@ def index():
     """
         method for home page
     """
-    return jsonify({"message": "Welcome to iReporter",
+    return jsonify({"message": "Welcome to iReporter application",
                     "status": 200}), 200
 
 
@@ -74,22 +76,16 @@ def login():
     if missing_credentials:
         return jsonify({"message": missing_credentials, "status": 400}), 400
     user_credentials = database.login(user_name, password)
-    payload = {
-        "user": user_credentials.get("user_name"),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
-    }
-    token = jwt.encode(
-        payload,
-        'edna1234',
-        algorithm='HS256'
-    )
+    user_login = user_credentials.get("user_name")
+    token = encode_token(user_login)
     if user_credentials is None:
         return jsonify({"message": "no user with such credentials", "status": 401}), 401
     return jsonify({"message": "successfully logged in", "status": 200,
-                    "token": token.decode('utf-8'), "data": [{"user": user_credentials}]}), 200
+                    "token": token, "data": [{"user": user_credentials}]}), 200
 
 
 @app.route('/api/v2/redflags', methods=['POST'])
+@auth
 def create_redflag():
     """
     creates redflag
@@ -108,12 +104,12 @@ def create_redflag():
 
 
 @app.route('/api/v2/interventions', methods=['POST'])
+@auth
 def create_intervention():
     """
     creates intervention
     """
     request_data = request.get_json(force=True)
-    # created_by = request_data.get('created_by')
     location = request_data.get('location')
     file = request_data.get('file')
     comment = request_data.get('comment')
@@ -127,6 +123,7 @@ def create_intervention():
 
 
 @app.route('/api/v2/redflags', methods=['GET'])
+@auth
 def get_all_redflags():
     """
     gets all red flags
@@ -138,6 +135,7 @@ def get_all_redflags():
 
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['GET'])
+@auth
 def get_single_redflag(incident_id):
     """
     gets single redflag
@@ -149,6 +147,7 @@ def get_single_redflag(incident_id):
 
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['DELETE'])
+@auth
 def delete_single_redflag(incident_id):
     """
     deletes a single redflag
@@ -161,6 +160,7 @@ def delete_single_redflag(incident_id):
 
 
 @app.route('/api/v2/redflags/<int:incident_id>/location', methods=['PATCH'])
+@auth
 def edit_location(incident_id):
     """
     edits location of a single redflag
@@ -178,6 +178,7 @@ def edit_location(incident_id):
 
 
 @app.route('/api/v2/redflags/<int:incident_id>/comment', methods=['PATCH'])
+@auth
 def edit_comment(incident_id):
     """
     method for editing comment of a single redflag
@@ -192,6 +193,7 @@ def edit_comment(incident_id):
 
 
 @app.route('/api/v2/interventions', methods=['GET'])
+@auth
 def all_interventions():
     """
     gets all interventions
@@ -203,6 +205,7 @@ def all_interventions():
 
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
+@auth
 def get_single_intervention(incident_id):
     """
     gets single intervention 
@@ -214,6 +217,7 @@ def get_single_intervention(incident_id):
 
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
+@auth
 def delete_single_interevention(incident_id):
     """
     deletes single intervention
