@@ -1,22 +1,31 @@
+import os
 import psycopg2
 import psycopg2.extras
+from pprint import pprint
 
 
 class Database:
     """ database class"""
 
     def __init__(self):
-        self.connection = psycopg2.connect(
-            dbname="reporter", user="edna", password="edna123", host="localhost", port="5432")
-        self.cursor_obj = self.connection.cursor(
-            cursor_factory=psycopg2.extras.RealDictCursor)
-        self.connection.autocommit = True
+        try:
+            if os.getenv('APP_SETTINGS') == 'testing':
+                db = 'testdb'
+            else:
+                db = 'reporter'
+            self.connection = psycopg2.connect(
+                dbname=db, user="edna", password="edna123", host="localhost", port="5432")
+            self.cursor_obj = self.connection.cursor(
+                cursor_factory=psycopg2.extras.RealDictCursor)
+            self.connection.autocommit = True
+        except:
+            print("cannot connect succesfully")
 
     def create_tables(self):
         commands = (
             """CREATE TABLE IF NOT EXISTS users ( user_id SERIAL PRIMARY KEY NOT NULL,
             first_name VARCHAR NOT NULL, last_name VARCHAR NOT NULL,other_names VARCHAR NOT NULL,
-            email VARCHAR NOT NULL, telephone INT NOT NULL,user_name VARCHAR(10) NOT NULL,
+            email VARCHAR NOT NULL, telephone INT NOT NULL,user_name VARCHAR NOT NULL,
             password VARCHAR(10) NOT NULL,registered TIMESTAMPTZ DEFAULT NOW(), isadmin VARCHAR DEFAULT 'false')
         """,
             """CREATE TABLE IF NOT EXISTS redflags(incident_id SERIAL PRIMARY KEY NOT NULL,
@@ -32,6 +41,10 @@ class Database:
         )
         for command in commands:
             self.cursor_obj.execute(command)
+
+    def drop_tables(self):
+        query = 'TRUNCATE users,redflags,interventions'
+        self.cursor_obj.execute(query)
 
     def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password):
         """
@@ -70,6 +83,7 @@ class Database:
             """ SELECT * FROM users WHERE user_name='{}'AND password='{}' """).format(username, password)
         self.cursor_obj.execute(query)
         returned_user = self.cursor_obj.fetchone()
+        pprint(returned_user)
         return returned_user
 
     def get_all_redflags(self):
@@ -153,7 +167,6 @@ class Database:
         new_location = self.cursor_obj
         return new_location
 
-
     def update_intervention_comment(self, comment, incident_id):
         """updates comment of intervention"""
         query = ("""UPDATE interventions SET comment = '{}' WHERE incident_id = {}""".format(
@@ -161,3 +174,7 @@ class Database:
         self.cursor_obj.execute(query)
         new_comment = self.cursor_obj
         return new_comment
+
+
+if __name__ == '__main__':
+    db = Database()

@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from werkzeug.security import generate_password_hash,check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from .models.incident import Incident
@@ -7,7 +7,6 @@ from .models.user import User, users
 from .validator import Validator
 from .helpers import encode_token, auth
 from .Database.db import Database
-
 
 
 incident_validator = Validator()
@@ -76,7 +75,7 @@ def login():
     if missing_credentials:
         return jsonify({"message": missing_credentials, "status": 400}), 400
     user_credentials = database.login(user_name, password)
-    user_login = user_credentials.get("user_name")
+    user_login = user_credentials["user_name"]
     token = encode_token(user_login)
     if user_credentials is None:
         return jsonify({"message": "no user with such credentials", "status": 401}), 401
@@ -213,7 +212,9 @@ def get_single_intervention(incident_id):
     single_intervention = database_obj.get_single_intervention(incident_id)
     if single_intervention:
         return jsonify({"status": 200, "data": [single_intervention]}), 200
-    return jsonify({"status": 404, "message": "no incident with such an id"}),
+    message = jsonify(
+        {"status": 404, "message": "no incident with such an id"}), 404
+    return message
 
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
@@ -240,11 +241,12 @@ def edit_intervention_location(incident_id):
     valid_edit = incident_validator.edit_location(location)
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
-    edited_location = database_obj.update_intervention_location(location, incident_id)
+    edited_location = database_obj.update_intervention_location(
+        location, incident_id)
     if edited_location:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated intervention's location"}]}), 200
-    return jsonify({"status": 200, "message": "location was updated"}), 200
+    return jsonify({"status": 400, "message": "no intervention with id"}), 400
 
 
 @app.route('/api/v2/interventions/<int:incident_id>/comment', methods=['PATCH'])
@@ -258,7 +260,8 @@ def edit_intervention_comment(incident_id):
     valid_edit = incident_validator.validate_new_comment(comment)
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
-    edited_comment = database_obj.update_intervention_comment(comment, incident_id)
+    edited_comment = database_obj.update_intervention_comment(
+        comment, incident_id)
     if edited_comment:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated intervention's comment"}]}), 200

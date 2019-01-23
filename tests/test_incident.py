@@ -1,6 +1,9 @@
 import unittest
 import json
 from app.views import app
+from app.Database.db import Database
+
+database = Database()
 
 
 class TestApi(unittest.TestCase):
@@ -9,161 +12,108 @@ class TestApi(unittest.TestCase):
         test for index page
         """
         self.test_client = app.test_client()
-        self.incident = {
-            "created_by": "edna",
-            "incident_type": "redflag",
-            "location": "2123 13241",
-            "file": "error.png",
-            "comment": "jisckmsldkmspoll,ldjo"
+        self.intervention = {
+            "location": 902093392,
+            "file": "ed.jpg",
+            "comment": "all is well"
         }
-        self.incident_missing = {
-            "created_by": "edna",
-            "incident_type": "redflag",
-            "file": "error.png",
-            "comment": "jisckmsldkmspoll,ldjo"
+        self.redflag = {
+            "location": 902093392,
+            "file": "ed.jpg",
+            "comment": "all is well"
         }
         self.user = {
-            "first_name": "edna",
-            "last_name": "mag",
-            "other_names": "eddiee",
-            "email": "ed@gmail",
-            "telephone": "9",
-            "user_name": "ednamar",
-            "password": "edna1234"
+            "first_name": "nakajugo",
+            "last_name": "nakajugo",
+            "other_names": "abenaky",
+            "email": "ed@gmail.com",
+            "telephone": "0781370907",
+            "user_name": "nakimari",
+            "password": "maria123"
         }
-        self.credentials = {
-            "user_name": "ednamar",
-            "password": "edna1234"
+        self.user_credentials = {
+            "user_name": "nakimari",
+            "password": "maria123"
         }
-        self.test_client.post(
-            '/api/v1/auth/signup', data=json.dumps(self.user))
+        self.response = self.test_client.post(
+            '/api/v2/auth/signup', data=json.dumps(self.user))
         self.login_response = self.test_client.post(
-            '/api/v1/auth/login', data=json.dumps(self.credentials), content_type="application/json")
+            '/api/v2/auth/login', data=json.dumps(self.user_credentials), content_type="application/json")
         jwt_token = json.loads(self.login_response.data)["token"]
         self.test_client.post(
-            '/api/v1/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.incident))
+            '/api/v2/redlags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
 
     def tearDown(self):
-        self.incident = None
+        database.drop_tables()
 
-    def test_index(self):
+    def test_create_intervention(self):
         """
-        test for welcome page
-        """
-        response = self.test_client.get('/api/v1/welcome')
-        data = json.loads(response.data)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(data['message'], "Welcome to iReporter")
-
-    def test_create_incident(self):
-        """ 
-        test for creating incident
+        test for creating intervention
         """
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.post(
-            '/api/v1/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.incident))
+            '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
         response_data = json.loads(response.data.decode())
-        self.assertEqual(response_data["data"], [
-            {
-                "message": "incident redflag has been created"
-            }
-        ])
+        self.assertEqual(response_data["message"],
+                         "intervention has been created")
         self.assertEqual(response.status_code, 201)
+        self.assertIs(type(response_data), dict)
 
-    def test_get_all_redflags(self):
+    def test_get_all_interventions(self):
+        """
+        test for geting all interventions
+        """
         jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/redflags', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.incident))
-        response = self.test_client.get('/api/v1/redflags', headers=dict(
+        response = self.test_client.post('/api/v2/interventions', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.intervention))
+        response = self.test_client.get('/api/v2/interventions', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json")
         self.assertEqual(response.status_code, 200)
 
-    def test_get_all_when_list_is_empty(self):
+    def test_get_single_intervention_that_doesnot_exist(self):
+        """
+        test for geting single interventions that doesnot exist
+        """
         jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.get('/api/v1/redflags',  headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json")
-        self.assertEqual(response.status_code, 200)
-
-    def test_get_single_redflag_that_doesnot_exist(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.get('/api/v1/redflags/100', headers=dict(
+        response = self.test_client.get('/api/v2/interventions/100', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json")
         self.assertEqual(response.status_code, 404)
 
-    def test_get_single_redflag_that_exist(self):
+    def test_delete_intervention_that_doesnot_exist(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/redflags', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.incident))
-        response = self.test_client.get('/api/v1/redflags/2', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json")
-        request_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 200)
-        self.assertIs(type(request_data), dict)
-
-    def test_delete_redflag(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/redflags', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.incident))
-
-        response = self.test_client.delete('/api/v1/redflags/1', headers=dict(
+        response = self.test_client.delete('/api/v2/redflags/5', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json",)
-        request_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(request_data["status"], 200)
-        self.assertEqual(request_data["data"], [
-            {
-                "id": 1,
-                "message": "red-flag record has been deleted"
-            }
-        ])
-        self.assertIs(type(request_data), dict)
-
-    def test_delete_redflag_that_doesnot_exist(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.delete('/api/v1/redflags/5', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json",)
-        request_data = json.loads(response.data.decode())
+        response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 404)
-        self.assertEqual(request_data["status"], 404)
-        self.assertEqual(request_data["message"],
+        self.assertEqual(response_data["status"], 404)
+        self.assertEqual(response_data["message"],
                          "no incident with such an id")
 
     def test_posting_missing_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/redflags', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.incident_missing))
+        missing_location = {
+            "location": "",
+            "file": "ed.jpg",
+            "comment": "corruption"
+        }
+        response = self.test_client.post('/api/v2/interventions', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(missing_location))
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response_data["message"], "location is missing")
+        self.assertEqual(response_data["message"], "location must be an integer of less then 9 integers")
+    
 
-    def test_edit_location_of_redlag_that_doesnot_exist(self):
+    def test_posting_missing_comment(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        edit_location = {"location": "ntinda"}
-        response = self.test_client.patch('/api/v1/redflags/78/location', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(edit_location))
-        self.assertEqual(response.status_code, 404)
+        missing_comment = {
+            "location": 56778,
+            "file": "ed.jpg",
+            "comment": ""
+        }
+        response = self.test_client.post('/api/v2/interventions', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(missing_comment))
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["message"], "comment is missing")
 
-    def test_edit_location_of_redlag_that_exists(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/redflags', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.incident))
-        edit_location = {"location": "ntinda"}
-        response = self.test_client.patch('/api/v1/redflags/2/location', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(edit_location))
-        self.assertEqual(response.status_code, 200)
 
-    def test_edit_comment_that_exists(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        response = self.test_client.post('/api/v1/redflags', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.incident))
-        edit_comment = {"comment": "comment changed"}
-        response = self.test_client.patch('/api/v1/redflags/2/comment', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(edit_comment))
-        self.assertEqual(response.status_code, 200)
-
-    def test_edit_comment_that_doesnot_exists(self):
-        jwt_token = json.loads(self.login_response.data)["token"]
-        edit_comment = {"comment": "comment changed"}
-        response = self.test_client.patch('/api/v1/redflags/200/comment', headers=dict(
-            Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(edit_comment))
-        self.assertEqual(response.status_code, 404)
