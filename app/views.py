@@ -153,8 +153,9 @@ def delete_single_redflag(incident_id):
     """
     deletes a single redflag
     """
-    delete_single_redflag = Incident.delete(incident_id)
-    if delete_single_redflag:
+    incident = database_obj.get_single_redflag(incident_id)
+    if incident:
+        database_obj.delete_redflag(incident_id)
         return jsonify({"status": 200, "data": [{"id": incident_id, "message": "red-flag record has been deleted"}]}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
 
@@ -220,5 +221,5 @@ def delete_single_interevention(incident_id):
     incident = database_obj.get_single_intervention(incident_id)
     if incident:
         database_obj.delete_intervention(incident_id)
-        return jsonify({"status": 200, "message": "intervention was deleted"}), 200
-    return jsonify({"status": 404, "message": "no incident with such an id"}),404
+        return jsonify({"status": 200, "id": incident_id, "message": "intervention was deleted"}), 200
+    return jsonify({"status": 404, "message": "no incident with such an id"}), 404

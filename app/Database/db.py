@@ -91,6 +91,14 @@ class Database:
         single_redflag = self.cursor_obj.fetchone()
         return single_redflag
 
+    def delete_redflag(self, incident_id):
+        """
+        deletes redflag from table redflags
+        """
+        query = (
+            """ DELETE FROM redflags WHERE incident_id = '{}'""".format(incident_id))
+        self.cursor_obj.execute(query)
+
     def update_location(self, location, incident_id):
         """updates location """
         query = ("""UPDATE redflags SET location = {} WHERE incident_id = {} """.format(
@@ -132,7 +140,7 @@ class Database:
         """
         deletes intervention from table interventions
         """
-        
+
         query = (
             """ DELETE FROM interventions WHERE incident_id = '{}'""".format(incident_id))
         self.cursor_obj.execute(query)
