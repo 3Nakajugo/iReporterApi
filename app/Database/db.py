@@ -147,8 +147,17 @@ class Database:
 
     def update_intervention_location(self, location, incident_id):
         """updates location of intervention"""
-        query = ("""UPDATE interventions SET location {} WHERE incident_id = {}""".format(
+        query = ("""UPDATE interventions SET location = {} WHERE incident_id = {}""".format(
             location, incident_id))
         self.cursor_obj.execute(query)
         new_location = self.cursor_obj
         return new_location
+
+
+    def update_intervention_comment(self, comment, incident_id):
+        """updates comment of intervention"""
+        query = ("""UPDATE interventions SET comment = '{}' WHERE incident_id = {}""".format(
+            comment, incident_id))
+        self.cursor_obj.execute(query)
+        new_comment = self.cursor_obj
+        return new_comment

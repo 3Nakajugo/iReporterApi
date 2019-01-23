@@ -19,6 +19,10 @@ class Validator:
             return "An image or video is missing"
         if not comment or comment.isspace():
             return"comment is missing"
+    
+    def validate_new_comment(self,comment):
+        if not comment or comment.isspace():
+            return"comment is missing"
 
     def validate_login(self, user_name, password):
         """

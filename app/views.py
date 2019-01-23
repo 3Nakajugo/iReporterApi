@@ -227,3 +227,39 @@ def delete_single_interevention(incident_id):
         database_obj.delete_intervention(incident_id)
         return jsonify({"status": 200, "id": incident_id, "message": "intervention was deleted"}), 200
     return jsonify({"status": 404, "message": "no incident with such an id"}), 404
+
+
+@app.route('/api/v2/interventions/<int:incident_id>/location', methods=['PATCH'])
+@auth
+def edit_intervention_location(incident_id):
+    """
+    edits location of a single intervention
+    """
+    edit_intervention_location = request.get_json(force=True)
+    location = edit_intervention_location.get("location")
+    valid_edit = incident_validator.edit_location(location)
+    if valid_edit:
+        return jsonify({"status": 400, "message": valid_edit}), 400
+    edited_location = database_obj.update_intervention_location(location, incident_id)
+    if edited_location:
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id,
+                                                 "message": "Updated intervention's location"}]}), 200
+    return jsonify({"status": 200, "message": "location was updated"}), 200
+
+
+@app.route('/api/v2/interventions/<int:incident_id>/comment', methods=['PATCH'])
+@auth
+def edit_intervention_comment(incident_id):
+    """
+    edits comment of a single intervention
+    """
+    edit_intervention_comment = request.get_json(force=True)
+    comment = edit_intervention_comment.get("comment")
+    valid_edit = incident_validator.validate_new_comment(comment)
+    if valid_edit:
+        return jsonify({"status": 400, "message": valid_edit}), 400
+    edited_comment = database_obj.update_intervention_comment(comment, incident_id)
+    if edited_comment:
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id,
+                                                 "message": "Updated intervention's comment"}]}), 200
+    return jsonify({"status": 200, "message": "comment was updated"}), 200

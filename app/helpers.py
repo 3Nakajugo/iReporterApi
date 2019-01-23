@@ -10,7 +10,7 @@ SECRECT_KEY = "edna123"
 def encode_token(user_name):
     payload = {
         "user": user_name,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15)
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=40)
     }
     token = jwt.encode(
         payload,
