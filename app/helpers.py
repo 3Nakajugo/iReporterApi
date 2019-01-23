@@ -27,7 +27,6 @@ def auth(func):
             return jsonify({"message": "Missing Authorization Header", "status": "401"}), 401
         if 'Authorization' in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
-            print(token) 
             try:
                 payload = jwt.decode(token, SECRECT_KEY, algorithms=['HS256'])
                 print(payload)
