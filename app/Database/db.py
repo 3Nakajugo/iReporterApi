@@ -144,3 +144,11 @@ class Database:
         query = (
             """ DELETE FROM interventions WHERE incident_id = '{}'""".format(incident_id))
         self.cursor_obj.execute(query)
+
+    def update_intervention_location(self, location, incident_id):
+        """updates location of intervention"""
+        query = ("""UPDATE interventions SET location {} WHERE incident_id = {}""".format(
+            location, incident_id))
+        self.cursor_obj.execute(query)
+        new_location = self.cursor_obj
+        return new_location
