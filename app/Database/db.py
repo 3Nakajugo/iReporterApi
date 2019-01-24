@@ -14,7 +14,7 @@ class Database:
             else:
                 self.db = 'reporter'
             self.connection = psycopg2.connect(
-                dbname=self.db, user="edna", password="edna123", host="localhost", port="5432")
+                dbname=self.db, user="postgres", host="localhost", port="5432")
             self.cursor_obj = self.connection.cursor(
                 cursor_factory=psycopg2.extras.RealDictCursor)
             self.connection.autocommit = True
