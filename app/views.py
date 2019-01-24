@@ -174,8 +174,8 @@ def edit_location(incident_id):
     if redflag:
         database_obj.update_location(location, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
-                                                     "message": "Updated redflag's location"}]}), 200
-    return jsonify({"status": 404, "message": "No redflag with such id"}),404
+                                                 "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 404, "message": "No redflag with such id"}), 404
 
 
 @app.route('/api/v2/redflags/<int:incident_id>/comment', methods=['PATCH'])
@@ -194,9 +194,8 @@ def edit_comment(incident_id):
     if redflag:
         database_obj.update_comment(comment, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
-                                                     "message": "Updated redflag's comment"}]}), 200
-    return jsonify({"status": 404, "message": "No redflag with such id"}),404
-
+                                                 "message": "Updated redflag's comment"}]}), 200
+    return jsonify({"status": 404, "message": "No redflag with such id"}), 404
 
 
 @app.route('/api/v2/interventions', methods=['GET'])
@@ -249,9 +248,9 @@ def edit_intervention_location(incident_id):
     valid_edit = incident_validator.edit_location(location)
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
-    edited_location = database_obj.update_intervention_location(
-        location, incident_id)
-    if edited_location:
+    intervention = database_obj.get_single_intervention(incident_id)
+    if intervention:
+        database_obj.update_intervention_location(location, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated intervention's location"}]}), 200
     return jsonify({"status": 400, "message": "no intervention with id"}), 400
@@ -268,9 +267,8 @@ def edit_intervention_comment(incident_id):
     valid_edit = incident_validator.validate_new_comment(comment)
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
-    edited_comment = database_obj.update_intervention_comment(
-        comment, incident_id)
-    if edited_comment:
-        return jsonify({"status": 200, "data": [{"incident_id": incident_id,
-                                                 "message": "Updated intervention's comment"}]}), 200
-    return jsonify({"status": 200, "message": "comment was updated"}), 200
+    intervention = database_obj.get_single_intervention(incident_id)
+    if intervention:
+        database_obj.update_intervention_comment(comment, incident_id)
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated intervention's comment"}]}), 200
+    return jsonify({"status": 404, "message": "No intervention with such an id"}), 404

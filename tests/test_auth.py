@@ -23,7 +23,6 @@ class TestApi(unittest.TestCase):
         }
 
     def tearDown(self):
-        pass
         database.drop_tables()
 
     def test_index(self):

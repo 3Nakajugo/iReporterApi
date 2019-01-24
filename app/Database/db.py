@@ -83,7 +83,6 @@ class Database:
             """ SELECT * FROM users WHERE user_name='{}'AND password='{}' """).format(username, password)
         self.cursor_obj.execute(query)
         returned_user = self.cursor_obj.fetchone()
-        pprint(returned_user)
         return returned_user
 
     def get_all_redflags(self):
@@ -182,6 +181,13 @@ class Database:
         self.cursor_obj.execute(query)
         new_comment = self.cursor_obj
         return new_comment
+    
+    # def update_status(self,isadmin,incident_id):
+    #     """ 
+    #     update status
+    #     """
+    #     query= ()
+
 
 
 if __name__ == '__main__':
