@@ -26,7 +26,8 @@ class TestIntervention(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju"
+            "password": "ednanakaju",
+            "isadmin":"False"
         }
         self.user_credentials = {
             "user_name": "eddiena",

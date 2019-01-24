@@ -25,16 +25,18 @@ class Database:
         commands = (
             """CREATE TABLE IF NOT EXISTS users ( user_id SERIAL PRIMARY KEY NOT NULL,
             first_name VARCHAR NOT NULL, last_name VARCHAR NOT NULL,other_names VARCHAR NOT NULL,
-            email VARCHAR NOT NULL, telephone INT NOT NULL,user_name VARCHAR NOT NULL,
-            password VARCHAR(10) NOT NULL,registered TIMESTAMPTZ DEFAULT NOW(), isadmin VARCHAR DEFAULT 'false')
+            email VARCHAR NOT NULL, telephone INT NOT NULL,user_name VARCHAR UNIQUE NOT NULL,
+            password VARCHAR(10) NOT NULL,registered TIMESTAMPTZ DEFAULT NOW(), isadmin BOOLEAN)
         """,
             """CREATE TABLE IF NOT EXISTS redflags(incident_id SERIAL PRIMARY KEY NOT NULL,
             incident_type VARCHAR DEFAULT 'redflag' , date TIMESTAMPTZ DEFAULT NOW(),
+            createdby VARCHAR,
             location INT NOT NULL, status VARCHAR DEFAULT 'draft',
             file VARCHAR ,comment VARCHAR NOT NULL
         )""",
             """CREATE TABLE IF NOT EXISTS interventions(incident_id SERIAL PRIMARY KEY NOT NULL,
-            incident_type VARCHAR DEFAULT 'intervention', date TIMESTAMPTZ DEFAULT NOW(),
+            incident_type VARCHAR DEFAULT 'intervention', date TIMESTAMPTZ DEFAULT NOW(), 
+            createdby VARCHAR,
             location INT NOT NULL, status VARCHAR DEFAULT 'draft',
             file VARCHAR ,comment VARCHAR NOT NULL
         )"""
@@ -46,12 +48,12 @@ class Database:
         query = 'DROP TABLE users,redflags,interventions;'
         self.cursor_obj.execute(query)
 
-    def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password):
+    def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password,isadmin):
         """
         creates user in database table users
         """
-        query = ("""INSERT INTO users(first_name, last_name, other_names, email, telephone, user_name, password) VALUES ('{}','{}','{}','{}','{}','{}','{}')RETURNING user_name """.format(
-            first_name, last_name, other_names, email, telephone, user_name, password))
+        query = ("""INSERT INTO users(first_name, last_name, other_names, email, telephone, user_name, password,isadmin) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')RETURNING user_name """.format(
+            first_name, last_name, other_names, email, telephone, user_name, password,isadmin))
         self.cursor_obj.execute(query)
         returned_record = self.cursor_obj.fetchone()
         return returned_record
@@ -59,12 +61,12 @@ class Database:
     def select_all_users(self):
         pass
 
-    def create_redflag(self, location, file, comment):
+    def create_redflag(self, location, file, comment,createdby):
         """
         creates redflag in database table redflags
         """
         query = (
-            """INSERT INTO redflags( location, file, comment) VALUES ('{}','{}','{}')RETURNING incident_id""".format(location, file, comment))
+            """INSERT INTO redflags( location, file, comment,createdby) VALUES ('{}','{}','{}','{}')RETURNING incident_id""".format(location, file, comment,createdby))
         self.cursor_obj.execute(query)
         reflag_record = self.cursor_obj.fetchall()
         return reflag_record
@@ -128,12 +130,12 @@ class Database:
         updated_comment = self.cursor_obj
         return updated_comment
 
-    def create_intervention(self, location, file, comment):
+    def create_intervention(self, location, file, comment,createdby):
         """
         creates intervention in database table intervention
         """
         query = (
-            """INSERT INTO interventions( location, file, comment) VALUES ('{}','{}','{}')RETURNING incident_id """.format(location, file, comment))
+            """INSERT INTO interventions( location, file, comment,createdby) VALUES ('{}','{}','{}','{}')RETURNING incident_id """.format(location, file, comment,createdby))
         self.cursor_obj.execute(query)
         intervention_record = self.cursor_obj.fetchone()
         return intervention_record
@@ -181,13 +183,12 @@ class Database:
         self.cursor_obj.execute(query)
         new_comment = self.cursor_obj
         return new_comment
-    
+
     # def update_status(self,isadmin,incident_id):
-    #     """ 
+    #     """
     #     update status
     #     """
     #     query= ()
-
 
 
 if __name__ == '__main__':

@@ -24,7 +24,8 @@ class TestRedflag(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju"
+            "password": "ednanakaju",
+            "isadmin":"False"
         }
         self.user_credentials = {
             "user_name": "eddiena",
@@ -52,7 +53,7 @@ class TestRedflag(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIs(type(response_data), dict)
     
-    def get_all_redflags(self):
+    def test_get_all_redflags(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
@@ -61,7 +62,7 @@ class TestRedflag(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIs(type(response_data), dict)
 
-    def get_single_redflag(self):
+    def test_get_single_redflag_record(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
@@ -70,7 +71,7 @@ class TestRedflag(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIs(type(response_data), dict)
     
-    def delete_single_redflag(self):
+    def test_delete_single_redflag(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))

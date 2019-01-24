@@ -20,7 +20,8 @@ class TestApi(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju"
+            "password": "ednanakaju",
+            "isadmin":"True"
         }
 
     def tearDown(self):
@@ -58,7 +59,8 @@ class TestApi(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju"
+            "password": "ednanakaju",
+             "isadmin":"True"
         }
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(user))
@@ -77,7 +79,8 @@ class TestApi(unittest.TestCase):
             "email": "ed@gma il.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju"
+            "password": "ednanakaju",
+             "isadmin":"True"
         }
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(invalid_email_user))
@@ -96,7 +99,8 @@ class TestApi(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "edna"
+            "password": "edna",
+             "isadmin":"True"
         }
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(invalid_password_user))
@@ -116,7 +120,8 @@ class TestApi(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju"
+            "password": "ednanakaju",
+             "isadmin":"True"
         }
         credentials = {"user_name": "eddiena",
                        "password": "ednanakaju"}
