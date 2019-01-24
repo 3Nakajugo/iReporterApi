@@ -184,13 +184,19 @@ def edit_comment(incident_id):
     """
     method for editing comment of a single redflag
     """
-    edit_redflag = Incident.update(incident_id)
-    if not edit_redflag:
-        return jsonify({"status": 404, "error": "no incident with such an id"}), 404
-    edit_redflag[0]['comment'] = request.json.get(
-        'comment', edit_redflag[0]['comment'])
-    if edit_redflag[0]['comment']:
-        return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated redflag's comment"}]}), 200
+    edit_redflag_location = request.get_json(force=True)
+    location = edit_redflag_location.get("comment")
+    invalid_edit = incident_validator.edit_location(location)
+    if invalid_edit:
+        return jsonify({"status": 400, "message": invalid_edit}), 400
+    redflag = database_obj.get_single_redflag(incident_id)
+    print(redflag)
+    if redflag:
+        database_obj.update_location(location, incident_id)
+        return jsonify({"status": 200, "data": [{"incident_id": incident_id,
+                                                     "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 404, "message": "No redflag with such id"}),404
+
 
 
 @app.route('/api/v2/interventions', methods=['GET'])
