@@ -87,7 +87,13 @@ class TestRedflag(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIs(type(response_data), dict)
     
-    # def test_delete_redflag_that_doenot_exist(self):
+    def test_delete_redflag_that_doenot_exist(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        response = self.test_client.delete('/api/v2/redflags/1', headers=dict(Authorization="Bearer " + jwt_token))
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response_data["message"],"no incident with such an id")
+
 
 
 
