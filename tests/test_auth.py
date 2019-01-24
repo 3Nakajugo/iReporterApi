@@ -11,6 +11,7 @@ class TestApi(unittest.TestCase):
         """
         test for index page
         """
+        database.create_tables()
         self.test_client = app.test_client()
         self.user = {
             "first_name": "edna",

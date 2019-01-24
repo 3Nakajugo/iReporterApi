@@ -75,7 +75,7 @@ def login():
     if missing_credentials:
         return jsonify({"message": missing_credentials, "status": 400}), 400
     user_credentials = database.login(user_name, password)
-    user_login = user_credentials["user_name"]
+    user_login = user_credentials.get("username")
     token = encode_token(user_login)
     if user_credentials is None:
         return jsonify({"message": "no user with such credentials", "status": 401}), 401

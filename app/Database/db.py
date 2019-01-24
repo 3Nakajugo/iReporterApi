@@ -14,7 +14,7 @@ class Database:
             else:
                 self.db = 'reporter'
             self.connection = psycopg2.connect(
-                dbname=self.db, user="postgres", host="localhost", port="5432")
+                dbname=self.db, user="edna", password="edna123", host="localhost", port="5432")
             self.cursor_obj = self.connection.cursor(
                 cursor_factory=psycopg2.extras.RealDictCursor)
             self.connection.autocommit = True
@@ -43,7 +43,7 @@ class Database:
             self.cursor_obj.execute(command)
 
     def drop_tables(self):
-        query = 'TRUNCATE users,redflags,interventions'
+        query = 'DROP TABLE users,redflags,interventions;'
         self.cursor_obj.execute(query)
 
     def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password):
