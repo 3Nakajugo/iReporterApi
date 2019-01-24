@@ -9,7 +9,7 @@ class Database:
 
     def __init__(self):
         try:
-            if os.getenv('APP_SETTINGS') == 'testdb':
+            if os.getenv('APP_SETTINGS') == 'testing':
                 self.db = 'testdb'
             else:
                 self.db = 'reporter'

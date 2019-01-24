@@ -5,11 +5,7 @@ version :
 
 service :
   - postgresql
-
-env:
-  global:
-    - "APP_SETTINGS"="testing"
-
+ 
 install:
   - pip install -r requirements.txt
 
