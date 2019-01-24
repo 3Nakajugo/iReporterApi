@@ -13,13 +13,13 @@ class TestApi(unittest.TestCase):
         """
         self.test_client = app.test_client()
         self.user = {
-            "first_name": "maria",
+            "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenaky",
+            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "nakimari",
-            "password": "maria123"
+            "user_name": "eddiena",
+            "password": "ednanakaju"
         }
 
     def tearDown(self):
@@ -54,11 +54,11 @@ class TestApi(unittest.TestCase):
         user = {
             "first_name": "",
             "last_name": "nakajugo",
-            "other_names": "abenaky",
+            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "nakimari",
-            "password": "maria123"
+            "user_name": "eddiena",
+            "password": "ednanakaju"
         }
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(user))
@@ -73,11 +73,11 @@ class TestApi(unittest.TestCase):
         invalid_email_user = {
             "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenaky",
-            "email": "ed@gmail. com",
+            "other_names": "abenakyo",
+            "email": "ed@gma il.com",
             "telephone": "0781370907",
-            "user_name": "nakimari",
-            "password": "maria123"
+            "user_name": "eddiena",
+            "password": "ednanakaju"
         }
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(invalid_email_user))
@@ -92,11 +92,11 @@ class TestApi(unittest.TestCase):
         invalid_password_user = {
             "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenaky",
+            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "nakimari",
-            "password": "m"
+            "user_name": "eddiena",
+            "password": "edna"
         }
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(invalid_password_user))
@@ -110,16 +110,16 @@ class TestApi(unittest.TestCase):
         test login
         """
         user = {
-            "first_name": "maria",
+            "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenaky",
+            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "nakimari",
-            "password": "maria123"
+            "user_name": "eddiena",
+            "password": "ednanakaju"
         }
-        credentials = {"user_name": "nakimari",
-                       "password": "maria123"}
+        credentials = {"user_name": "eddiena",
+                       "password": "ednanakaju"}
         response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(user))
         response = self.test_client.post(
@@ -128,7 +128,7 @@ class TestApi(unittest.TestCase):
 
     def test_login_invalid_username(self):
         invalid_credentials = {"user_name": "",
-                       "password": "maria123"}
+                       "password": "ednanakaju"}
         response = self.test_client.post(
             '/api/v2/auth/login', data=json.dumps(invalid_credentials))
         response_data = json.loads(response.data.decode())
@@ -137,12 +137,11 @@ class TestApi(unittest.TestCase):
                          "username Cannot be empty")
 
     def test_login_invalid_password(self):
-            invalid_credentials = {"user_name":"ednaer",
-                        "password": ""}
-            response = self.test_client.post(
-                '/api/v2/auth/login', data=json.dumps(invalid_credentials))
-            response_data = json.loads(response.data.decode())
-            self.assertEqual(response.status_code, 400)
-            self.assertEqual(response_data["message"],
-                            "password cannot be empty")
-  
+        invalid_credentials = {"user_name": "eddiena",
+                       "password": ""}
+        response = self.test_client.post(
+            '/api/v2/auth/login', data=json.dumps(invalid_credentials))
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["message"],
+                         "password cannot be empty")

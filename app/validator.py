@@ -57,6 +57,8 @@ class Validator:
             return "please input telephone"
         if not telephone.isdigit():
             return "phone number should be intergers"
+        if not password.isalpha():
+            return "password should contain no spaces "
         if len(telephone) is not 10:
             return "Phone number must be 10 characters"
         if len(user_name) < 5:
@@ -78,10 +80,10 @@ class Validator:
         if not other_names:
             return "other_name is missing"
         if not first_name.isalpha():
-            return "firstname should be alphabetical characters"
+            return "firstname should not contain spaces or special characters"
         if not last_name.isalpha():
-            return "last_name should be alphabetical characters"
+            return "last_name should not contain spaces or special characters"
         if not other_names.isalpha():
-            return "other_name should be alphabetical characters"
+            return "other_name should not contain spaces or special characters"
         if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
             return "names must not exceed 15 characters"

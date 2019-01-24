@@ -166,14 +166,16 @@ def edit_location(incident_id):
     """
     edit_redflag_location = request.get_json(force=True)
     location = edit_redflag_location.get("location")
-    valid_edit = incident_validator.edit_location(location)
-    if valid_edit:
-        return jsonify({"status": 400, "message": valid_edit}), 400
-    edited_location = database_obj.update_location(location, incident_id)
-    if edited_location:
+    invalid_edit = incident_validator.edit_location(location)
+    if invalid_edit:
+        return jsonify({"status": 400, "message": invalid_edit}), 400
+    redflag = database_obj.get_single_redflag(incident_id)
+    if redflag:
+        database_obj.update_location(location, incident_id)
+    # if edited_location:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
-                                                 "message": "Updated redflag's location"}]}), 200
-    return jsonify({"status": 200, "message": "location was updated"}), 200
+                                                     "message": "Updated redflag's location"}]}), 200
+    return jsonify({"status": 404, "message": "No redflag with such id"}),404
 
 
 @app.route('/api/v2/redflags/<int:incident_id>/comment', methods=['PATCH'])

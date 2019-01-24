@@ -23,23 +23,24 @@ class TestApi(unittest.TestCase):
             "comment": "all is well"
         }
         self.user = {
-            "first_name": "nakajugo",
+            "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenaky",
+            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "nakimari",
-            "password": "maria123"
+            "user_name": "eddiena",
+            "password": "ednanakaju"
         }
         self.user_credentials = {
-            "user_name": "nakimari",
-            "password": "maria123"
+            "user_name": "eddiena",
+            "password": "ednanakaju"
         }
         self.response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(self.user))
         self.login_response = self.test_client.post(
             '/api/v2/auth/login', data=json.dumps(self.user_credentials), content_type="application/json")
         jwt_token = json.loads(self.login_response.data)["token"]
+        print(jwt_token)
         self.test_client.post(
             '/api/v2/redlags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
 
@@ -55,7 +56,7 @@ class TestApi(unittest.TestCase):
             '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
         response_data = json.loads(response.data.decode())
         self.assertEqual(response_data["message"],
-                         "intervention has been created")
+         "intervention has been created")
         self.assertEqual(response.status_code, 201)
         self.assertIs(type(response_data), dict)
 
@@ -101,7 +102,6 @@ class TestApi(unittest.TestCase):
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data["message"], "location must be an integer of less then 9 integers")
-    
 
     def test_posting_missing_comment(self):
         jwt_token = json.loads(self.login_response.data)["token"]
@@ -115,5 +115,3 @@ class TestApi(unittest.TestCase):
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data["message"], "comment is missing")
-
-
