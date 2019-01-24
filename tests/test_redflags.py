@@ -53,6 +53,8 @@ class TestRedflag(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIs(type(response_data), dict)
     
+    # def test_get_all
+    
     def test_get_all_redflags(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.post(

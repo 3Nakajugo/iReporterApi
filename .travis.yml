@@ -10,11 +10,11 @@ install:
   - pip install -r requirements.txt
 
 before_script:
- - "psql -c 'CREATE DATABASE testdb;' -U postgres"
+ - psql -c "CREATE DATABASE testdb;" -U postgres
 
 
 script:
-  - pytest --cov=.
+  - pytest --cov
 
 after_script:
   - coveralls
