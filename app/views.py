@@ -185,16 +185,16 @@ def edit_comment(incident_id):
     method for editing comment of a single redflag
     """
     edit_redflag_location = request.get_json(force=True)
-    location = edit_redflag_location.get("comment")
-    invalid_edit = incident_validator.edit_location(location)
+    comment = edit_redflag_location.get("comment")
+    invalid_edit = incident_validator.edit_location(comment)
     if invalid_edit:
         return jsonify({"status": 400, "message": invalid_edit}), 400
     redflag = database_obj.get_single_redflag(incident_id)
     print(redflag)
     if redflag:
-        database_obj.update_location(location, incident_id)
+        database_obj.update_comment(comment, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
-                                                     "message": "Updated redflag's location"}]}), 200
+                                                     "message": "Updated redflag's comment"}]}), 200
     return jsonify({"status": 404, "message": "No redflag with such id"}),404
 
 

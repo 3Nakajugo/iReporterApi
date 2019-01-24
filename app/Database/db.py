@@ -14,7 +14,7 @@ class Database:
             else:
                 db = 'reporter'
             self.connection = psycopg2.connect(
-                dbname=db, user="edna", password="edna123", host="localhost", port="5432")
+                dbname=db, user="postgres", host="localhost", port="5432")
             self.cursor_obj = self.connection.cursor(
                 cursor_factory=psycopg2.extras.RealDictCursor)
             self.connection.autocommit = True
@@ -120,6 +120,14 @@ class Database:
         self.cursor_obj.execute(query)
         updated_location = self.cursor_obj
         return updated_location
+
+    def update_comment(self, comment, incident_id):
+        """updates location """
+        query = ("""UPDATE redflags SET location = {} WHERE incident_id = {} """.format(
+            comment, incident_id))
+        self.cursor_obj.execute(query)
+        updated_comment = self.cursor_obj
+        return updated_comment
 
     def create_intervention(self, location, file, comment):
         """
