@@ -173,7 +173,6 @@ def edit_location(incident_id):
     print(redflag)
     if redflag:
         database_obj.update_location(location, incident_id)
-    # if edited_location:
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                      "message": "Updated redflag's location"}]}), 200
     return jsonify({"status": 404, "message": "No redflag with such id"}),404
