@@ -115,3 +115,4 @@ class TestApi(unittest.TestCase):
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data["message"], "comment is missing")
+

@@ -8,7 +8,7 @@ service :
 
 env:
   global:
-    - db='testdb'
+    - "APP_SETTINGS"="testing"
 
 install:
   - pip install -r requirements.txt
