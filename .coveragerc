@@ -9,4 +9,5 @@ omit =
     */tests/*
     */Database/*
     *validator.py
+    */home/travis/virtualenv/*
    
