@@ -39,20 +39,22 @@ iReporter enables any/every citizen to bring any form of corruption to the notic
 
 ``` $ pytest ```
 
-## Heroku
-
-https://appreporter.herokuapp.com/api/v1/welcome
 
 
 ## End points
 
 | End points  	                |  Method	| Routes                                |
 |---	                        |---	    |---                                    |
-|Create a red-flag record       | POST      |/api/v1/incidents                      |
-| Get all red-flag records      |GET        |/api/v1/incidents                      |
-| Get a specific red-flag record|GET        |/api/v1/incidents/<int:incident_id>    |
-|Edit a specific red-flag record|PATCH      |/api/v1/incidents/<int:incident_id>    |
-|Delete a red-flag record	    |  DELETE   | /api/v1/incidents/<int:incident_id>  	|
+|Create a red-flag record       | POST      |/api/v2/incidents                      |
+| Get all red-flag records      |GET        |/api/v2/incidents                      |
+| Get a specific red-flag record|GET        |/api/v2/incidents/<int:incident_id>    |
+|Edit a specific red-flag record|PATCH      |/api/v2/incidents/<int:incident_id>    |
+|Delete a red-flag record	    |  DELETE   | /api/v2/incidents/<int:incident_id>  	|
+|create an intervention         |   POST    |/api/v2/interventions                  |
+|get all interventions          |   GET     |/api/v2/interventions                  |
+|get specific intervention      |   GET     |/api/v2/interventions /<int:incident_id>|
+|Delete specific intervention   |   GET     |/api/v2/interventions /<int:incident_id>|
+|edit specific intervention     |   PATCH    |/api/v2/interventions /<int:incident_id>|
 
 ### Author
 Edna Nakajugo Margaret
