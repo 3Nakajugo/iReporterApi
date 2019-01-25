@@ -150,3 +150,23 @@ class TestApi(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data["message"],
                          "password cannot be empty")
+    
+    def test_signup_when_admin_missing(self):
+        admin_missing = {
+            "first_name": "edna",
+            "last_name": "nakajugo",
+            "other_names": "abenakyo",
+            "email": "ed@gmail.com",
+            "telephone": "0781370907",
+            "user_name": "eddiena",
+            "password": "ednanakaju",
+             "isadmin":""
+        }
+        response = self.test_client.post(
+            '/api/v2/auth/signup', data=json.dumps(admin_missing))
+        self.assertEqual(response.status_code,400)
+
+
+        
+        
+

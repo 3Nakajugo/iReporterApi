@@ -37,8 +37,7 @@ class TestIntervention(unittest.TestCase):
             '/api/v2/auth/signup', data=json.dumps(self.user))
         self.login_response = self.test_client.post(
             '/api/v2/auth/login', data=json.dumps(self.user_credentials), content_type="application/json")
-        jwt_token = json.loads(self.login_response.data)["token"]
-        print(jwt_token)
+        # jwt_token = json.loads(self.login_response.data)["token"]
 
     def tearDown(self):
         database.drop_tables()
@@ -145,5 +144,56 @@ class TestIntervention(unittest.TestCase):
         response = self.test_client.post('/api/v2/interventions', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(missing_file))
         self.assertEqual(response.status_code, 400)
+    
+    def test_get_interventions_when_table_empty(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        response = self.test_client.get('/api/v2/interventions', headers=dict(
+            Authorization="Bearer " + jwt_token), content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_intervention_comment(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        comment={"comment":"corruption"}
+        response = self.test_client.post(
+            '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
+        response = self.test_client.patch(
+            '/api/v2/interventions/1/comment', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(comment))
+        self.assertEqual(response.status_code,200)
+
+    def test_edit_intervention_location(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        location={"location":888888}
+        response = self.test_client.post(
+            '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
+        response = self.test_client.patch(
+            '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
+        self.assertEqual(response.status_code,200)
+
+    def test_eidt_location_intervention_that_doesnot_exist(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        location={"location":888888}
+        response = self.test_client.patch(
+            '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
+        self.assertEqual(response.status_code,404)
+
+    def test_eidt_comment_intervention_that_doesnot_exist(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        comment={"comment":"corruption"}
+        response = self.test_client.patch(
+            '/api/v2/interventions/1/comment', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(comment))
+        self.assertEqual(response.status_code,404)
+
+
+    def test_edit_intervention_with_invalid_location(self):
+        jwt_token = json.loads(self.login_response.data)["token"]
+        location={"location":"888888"}
+        response = self.test_client.post(
+            '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
+        response = self.test_client.patch(
+            '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
+        response_data=json.loads(response.data.decode())
+        self.assertEqual(response.status_code,400)
+        self.assertEqual(response_data["message"],"location must be an integer of less then 9 integers")
+
     
    

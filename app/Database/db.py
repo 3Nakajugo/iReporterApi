@@ -10,22 +10,14 @@ class Database:
     def __init__(self):
         try:
             if os.getenv('APP_SETTINGS') == 'testing':
-                # self.db = 'testdb'
                 self.connection = psycopg2.connect(
-                dbname="testdb", user="postgres", host="localhost", port="5432")
+                    dbname="testdb", user="postgres", host="localhost", port="5432")
                 self.cursor_obj = self.connection.cursor(
-                cursor_factory=psycopg2.extras.RealDictCursor)
-                self.connection.autocommit = True
-            elif os.getenv('APP_SETTINGS')=='dfcodssa5u7h7l':
-                self.connection = psycopg2.connect(
-                dbname="dfcodssa5u7h7l", user="kdcqzeryvfzvuc", host="ec2-50-17-193-83.compute-1.amazonaws.com", port="5432")
-                self.cursor_obj = self.connection.cursor(
-                cursor_factory=psycopg2.extras.RealDictCursor)
+                    cursor_factory=psycopg2.extras.RealDictCursor)
                 self.connection.autocommit = True
             else:
-                # self.db = 'reporter'
                 self.connection = psycopg2.connect(
-                    dbname="reporter", user="edna",password="edna123", host="localhost", port="5432")
+                    dbname="reporter", user="edna", password="edna123", host="localhost", port="5432")
                 self.cursor_obj = self.connection.cursor(
                     cursor_factory=psycopg2.extras.RealDictCursor)
                 self.connection.autocommit = True
@@ -59,12 +51,12 @@ class Database:
         query = 'DROP TABLE users,redflags,interventions;'
         self.cursor_obj.execute(query)
 
-    def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password,isadmin):
+    def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password, isadmin):
         """
         creates user in database table users
         """
         query = ("""INSERT INTO users(first_name, last_name, other_names, email, telephone, user_name, password,isadmin) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')RETURNING user_name """.format(
-            first_name, last_name, other_names, email, telephone, user_name, password,isadmin))
+            first_name, last_name, other_names, email, telephone, user_name, password, isadmin))
         self.cursor_obj.execute(query)
         returned_record = self.cursor_obj.fetchone()
         return returned_record
@@ -72,12 +64,12 @@ class Database:
     def select_all_users(self):
         pass
 
-    def create_redflag(self, location, file, comment,createdby):
+    def create_redflag(self, location, file, comment, createdby):
         """
         creates redflag in database table redflags
         """
         query = (
-            """INSERT INTO redflags( location, file, comment,createdby) VALUES ('{}','{}','{}','{}')RETURNING incident_id""".format(location, file, comment,createdby))
+            """INSERT INTO redflags( location, file, comment,createdby) VALUES ('{}','{}','{}','{}')RETURNING incident_id""".format(location, file, comment, createdby))
         self.cursor_obj.execute(query)
         reflag_record = self.cursor_obj.fetchall()
         return reflag_record
@@ -135,18 +127,18 @@ class Database:
 
     def update_comment(self, comment, incident_id):
         """updates location """
-        query = ("""UPDATE redflags SET location = {} WHERE incident_id = {} """.format(
+        query = ("""UPDATE redflags SET comment = '{}' WHERE incident_id = {} """.format(
             comment, incident_id))
         self.cursor_obj.execute(query)
         updated_comment = self.cursor_obj
         return updated_comment
 
-    def create_intervention(self, location, file, comment,createdby):
+    def create_intervention(self, location, file, comment, createdby):
         """
         creates intervention in database table intervention
         """
         query = (
-            """INSERT INTO interventions( location, file, comment,createdby) VALUES ('{}','{}','{}','{}')RETURNING incident_id """.format(location, file, comment,createdby))
+            """INSERT INTO interventions( location, file, comment,createdby) VALUES ('{}','{}','{}','{}')RETURNING incident_id """.format(location, file, comment, createdby))
         self.cursor_obj.execute(query)
         intervention_record = self.cursor_obj.fetchone()
         return intervention_record
@@ -195,11 +187,14 @@ class Database:
         new_comment = self.cursor_obj
         return new_comment
 
-    # def update_status(self,isadmin,incident_id):
-    #     """
-    #     update status
-    #     """
-    #     query= ()
+    def update_status(self,incident_id,status):
+        """
+        update status
+        """
+        query= ("""UPDATE interventions SET status='{}' WHERE incident_id={}""").format(status,incident_id)
+        self.cursor_obj.execute(query)
+        new_status = self.cursor_obj
+        return new_status
 
 
 if __name__ == '__main__':

@@ -43,6 +43,9 @@ def register_user():
     isadmin = request_data.get('isadmin')
     invalid_user = incident_validator.validate_user_credentials(
         email, password, user_name, telephone)
+    invalid_isadmin = incident_validator.validate_isadmin(isadmin)
+    if invalid_isadmin:
+        return jsonify({"status": 400, "message": invalid_isadmin}), 400
     if invalid_user:
         return jsonify({"status": 400, "message": invalid_user}), 400
     invalid_email = incident_validator.validate_email(email)
@@ -58,7 +61,7 @@ def register_user():
     user_record = database_obj.create_user(
         first_name, last_name, other_names, email, telephone, user_name, password, isadmin)
     if not user_record:
-        return jsonify({"status": 400, "message": "user has been created"}), 400
+        return jsonify({"status": 400, "message": "user has not been created"}), 400
     return jsonify({"data": [user_record],
                     "status": 201, "message": "user has been created"}), 201
 
@@ -82,7 +85,7 @@ def login():
     if user_credentials is None:
         return jsonify({"message": "no user with such credentials", "status": 401}), 401
     return jsonify({"message": "successfully logged in", "status": 200,
-                    "token": token, "data": [{"user": user_credentials}]}), 200
+                    "token": token, "data": [user_credentials]}), 200
 
 
 @app.route('/api/v2/redflags', methods=['POST'])
@@ -141,7 +144,7 @@ def get_all_redflags(current_user):
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['GET'])
 @auth
-def get_single_redflag(current_user,incident_id):
+def get_single_redflag(current_user, incident_id):
     """
     gets single redflag
     """
@@ -153,7 +156,7 @@ def get_single_redflag(current_user,incident_id):
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['DELETE'])
 @auth
-def delete_single_redflag(current_user,incident_id):
+def delete_single_redflag(current_user, incident_id):
     """
     deletes a single redflag
     """
@@ -166,7 +169,7 @@ def delete_single_redflag(current_user,incident_id):
 
 @app.route('/api/v2/redflags/<int:incident_id>/location', methods=['PATCH'])
 @auth
-def edit_location(current_user,incident_id):
+def edit_location(current_user, incident_id):
     """
     edits location of a single redflag
     """
@@ -186,13 +189,13 @@ def edit_location(current_user,incident_id):
 
 @app.route('/api/v2/redflags/<int:incident_id>/comment', methods=['PATCH'])
 @auth
-def edit_comment(current_user,incident_id):
+def edit_comment(current_user, incident_id):
     """
     method for editing comment of a single redflag
     """
-    edit_redflag_location = request.get_json(force=True)
-    comment = edit_redflag_location.get("comment")
-    invalid_edit = incident_validator.edit_location(comment)
+    edit_redflag_comment = request.get_json(force=True)
+    comment = edit_redflag_comment.get("comment")
+    invalid_edit = incident_validator.edit_comment(comment)
     if invalid_edit:
         return jsonify({"status": 400, "message": invalid_edit}), 400
     redflag = database_obj.get_single_redflag(incident_id)
@@ -218,7 +221,7 @@ def all_interventions(current_user):
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
 @auth
-def get_single_intervention(current_user,incident_id):
+def get_single_intervention(current_user, incident_id):
     """
     gets single intervention 
     """
@@ -232,7 +235,7 @@ def get_single_intervention(current_user,incident_id):
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
 @auth
-def delete_single_interevention(current_user,incident_id):
+def delete_single_interevention(current_user, incident_id):
     """
     deletes single intervention
     """
@@ -245,7 +248,7 @@ def delete_single_interevention(current_user,incident_id):
 
 @app.route('/api/v2/interventions/<int:incident_id>/location', methods=['PATCH'])
 @auth
-def edit_intervention_location(current_user,incident_id):
+def edit_intervention_location(current_user, incident_id):
     """
     edits location of a single intervention
     """
@@ -259,12 +262,12 @@ def edit_intervention_location(current_user,incident_id):
         database_obj.update_intervention_location(location, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated intervention's location"}]}), 200
-    return jsonify({"status": 400, "message": "no intervention with id"}), 400
+    return jsonify({"status": 404, "message": "no intervention with id"}), 404
 
 
 @app.route('/api/v2/interventions/<int:incident_id>/comment', methods=['PATCH'])
 @auth
-def edit_intervention_comment(current_user,incident_id):
+def edit_intervention_comment(current_user, incident_id):
     """
     edits comment of a single intervention
     """
@@ -278,3 +281,17 @@ def edit_intervention_comment(current_user,incident_id):
         database_obj.update_intervention_comment(comment, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated intervention's comment"}]}), 200
     return jsonify({"status": 404, "message": "No intervention with such an id"}), 404
+
+
+@app.route('/api/v2/interventions/<int:incident_id>/status', methods=["PATCH"])
+def update_status_interventions(current_user,status, incident_id):
+    """ 
+    updates status of intervention
+    """
+    status_data = request.get_json(force=True)
+    status = status_data.get("status")
+    intervention = database_obj.get_single_intervention(incident_id)
+    if intervention["status"] == "draft":
+        database_obj.update_status(incident_id, status)
+        return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated Interventions status"}]}), 200
+    return jsonify({"status": 400, "message": "record can not be updated"}), 400

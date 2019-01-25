@@ -19,8 +19,8 @@ class Validator:
             return "An image or video is missing"
         if not comment or comment.isspace():
             return"comment is missing"
-    
-    def validate_new_comment(self,comment):
+
+    def validate_new_comment(self, comment):
         if not comment or comment.isspace():
             return"comment is missing"
 
@@ -41,7 +41,15 @@ class Validator:
             return "location is missing"
         if not (isinstance(location, int)):
             return "location must be an integer of less then 9 integers"
-            
+    
+    def edit_comment(self, comment):
+        """
+        validates edit comment
+        """
+        if not comment:
+            return "comment is missing"
+        if comment.isspace():
+            return "comment must not be empty"
 
     def validate_user_credentials(self, email, password, user_name, telephone):
         """
@@ -67,12 +75,18 @@ class Validator:
             return "password must be longer than 8 characters"
 
     def validate_email(self, email):
+        """ 
+        validates email
+        """
         valid_email = re.compile(
             r"(^[a-zA-Z0-9_.]+@[a-zA-Z0-9]+\.[a-z]+$)")
         if not valid_email.match(email):
             return "please input valid email"
 
     def validate_names(self, first_name, last_name, other_names):
+        """ 
+        validates names
+        """
         if not first_name:
             return "first_name is missing"
         if not last_name:
@@ -87,3 +101,14 @@ class Validator:
             return "other_name should not contain spaces or special characters"
         if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
             return "names must not exceed 15 characters"
+
+    def validate_isadmin(self,isadmin):
+        """
+        validates role
+        """
+        if not isadmin:
+            return "role is missing"
+        if isadmin.isspace():
+            return "role cannot be  empty"
+        if isadmin not in ["True","False"]:
+            return "role should be True or False"
