@@ -2,27 +2,25 @@ import re
 
 
 class Validator:
-    """
-    method to validate incident
-    """
 
-    class Validator:
-        """
+    """
     validates incident
     """
 
-    def validate_incident(self, created_by, incident_type, location, file, comment):
+    def validate_incident(self, location, file, comment):
         """
         validates create incident
         """
-        if not created_by or created_by.isspace():
-            return "Name of creator is missing"
-        if not incident_type or incident_type.isspace():
-            return "please mark the incident as redflag or intervention"
-        if not location or location.isspace():
+        if not (isinstance(location, int)):
+            return "location must be an integer of less then 9 integers"
+        if not location:
             return "location is missing"
         if not file or file.isspace():
             return "An image or video is missing"
+        if not comment or comment.isspace():
+            return"comment is missing"
+
+    def validate_new_comment(self, comment):
         if not comment or comment.isspace():
             return"comment is missing"
 
@@ -34,6 +32,24 @@ class Validator:
             return "username Cannot be empty"
         if not password or password.isspace():
             return "password cannot be empty"
+
+    def edit_location(self, location):
+        """
+        validates edit location
+        """
+        if not location:
+            return "location is missing"
+        if not (isinstance(location, int)):
+            return "location must be an integer of less then 9 integers"
+    
+    def edit_comment(self, comment):
+        """
+        validates edit comment
+        """
+        if not comment:
+            return "comment is missing"
+        if comment.isspace():
+            return "comment must not be empty"
 
     def validate_user_credentials(self, email, password, user_name, telephone):
         """
@@ -47,18 +63,52 @@ class Validator:
             return "please input email"
         if not telephone or telephone.isspace():
             return "please input telephone"
-        if not re.search("[0-9]", telephone):
-            return "contact must be digits"
+        if not telephone.isdigit():
+            return "phone number should be intergers"
+        if not password.isalpha():
+            return "password should contain no spaces "
+        if len(telephone) is not 10:
+            return "Phone number must be 10 characters"
         if len(user_name) < 5:
             return "username must be longer than 5 characters"
         if len(password) < 8:
             return "password must be longer than 8 characters"
 
-    def check_id(self, incident_id):
+    def validate_email(self, email):
+        """ 
+        validates email
         """
-        validates incident id
+        valid_email = re.compile(
+            r"(^[a-zA-Z0-9_.]+@[a-zA-Z0-9]+\.[a-z]+$)")
+        if not valid_email.match(email):
+            return "please input valid email"
+
+    def validate_names(self, first_name, last_name, other_names):
+        """ 
+        validates names
         """
-        try:
-            type(incident_id) == int
-        except Exception:
-            return "Input should be an interger"
+        if not first_name:
+            return "first_name is missing"
+        if not last_name:
+            return "last_name is missing"
+        if not other_names:
+            return "other_name is missing"
+        if not first_name.isalpha():
+            return "firstname should not contain spaces or special characters"
+        if not last_name.isalpha():
+            return "last_name should not contain spaces or special characters"
+        if not other_names.isalpha():
+            return "other_name should not contain spaces or special characters"
+        if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
+            return "names must not exceed 15 characters"
+
+    def validate_isadmin(self,isadmin):
+        """
+        validates role
+        """
+        if not isadmin:
+            return "role is missing"
+        if isadmin.isspace():
+            return "role cannot be  empty"
+        if isadmin not in ["True","False"]:
+            return "role should be True or False"

@@ -5,4 +5,9 @@ omit =
     */__init__.py
     *__init__.py
     */tests/__init__.py 
+    */models/*
+    */tests/*
+    */Database/*
+    *validator.py
+    */home/travis/virtualenv/*
    

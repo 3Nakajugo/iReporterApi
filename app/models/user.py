@@ -40,16 +40,25 @@ class User:
 
     @staticmethod
     def create(user):
+        """ 
+        creates user
+        """
         new_user = user.user_to_json()
         users.append(new_user)
         return new_user
 
     @staticmethod
     def get_all_users():
+        """ 
+        returns all users
+        """
         return users
 
     @staticmethod
     def login(user_name, password):
+        """ 
+        logs in user
+        """
         for user in users:
             if user["user_name"] == user_name and user["password"] == password:
                 return user
