@@ -5,7 +5,7 @@ import datetime
 from .models.incident import Incident
 from .models.user import User, users
 from .validator import Validator
-from .helpers import encode_token, auth
+from .helpers import encode_token, auth, admin
 from .Database.db import Database
 
 
@@ -139,7 +139,7 @@ def get_all_redflags(current_user):
     all_redflags = database_obj.get_all_redflags()
     if all_redflags:
         return jsonify({"data": all_redflags, "status": 200, "message": "all Redflags"}), 200
-    return jsonify({"data": [], "status": 200,  "message": "No Redflags to display"}), 200
+    return jsonify({"data": [], "status": 200, "message": "No Redflags to display"}), 200
 
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['GET'])
@@ -216,7 +216,7 @@ def all_interventions(current_user):
     all_records = database_obj.get_all_interventions()
     if all_records:
         return jsonify({"data": all_records, "status": 200, "message": "all interventions"}), 200
-    return jsonify({"status": 200,  "message": "No interventions to display"}), 200
+    return jsonify({"status": 200, "message": "No interventions to display"}), 200
 
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
@@ -284,14 +284,31 @@ def edit_intervention_comment(current_user, incident_id):
 
 
 @app.route('/api/v2/interventions/<int:incident_id>/status', methods=["PATCH"])
-def update_status_interventions(current_user,status, incident_id):
+@admin
+def update_interventions_status(incident_id):
     """ 
     updates status of intervention
     """
     status_data = request.get_json(force=True)
     status = status_data.get("status")
     intervention = database_obj.get_single_intervention(incident_id)
+    print(intervention)
     if intervention["status"] == "draft":
-        database_obj.update_status(incident_id, status)
+        database_obj.update_intervention_status(status, incident_id)
         return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated Interventions status"}]}), 200
-    return jsonify({"status": 400, "message": "record can not be updated"}), 400
+    return jsonify({"status": 400, "message": "record can not be updated because status is not draft"}), 400
+
+
+@app.route('/api/v2/redflags/<int:incident_id>/status', methods=["PATCH"])
+@admin
+def update_redflag_status(incident_id):
+    """ 
+    updates status of redflag
+    """
+    status_data = request.get_json(force=True)
+    status = status_data.get("status")
+    redflag = database_obj.get_single_redflag(incident_id)
+    if redflag["status"] == "draft":
+        database_obj.update_redflag_status(status, incident_id)
+        return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated redflag's status"}]}), 200
+    return jsonify({"status": 400, "message": "record can not be updated because status is not draft"}), 400

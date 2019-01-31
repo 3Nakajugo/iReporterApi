@@ -21,7 +21,7 @@ class User:
         self.isadmin = False
 
     def user_to_json(self):
-        """ 
+        """\
         method to turn user to dictionary
         """
         return {
@@ -40,7 +40,7 @@ class User:
 
     @staticmethod
     def create(user):
-        """ 
+        """\
         creates user
         """
         new_user = user.user_to_json()
@@ -49,14 +49,14 @@ class User:
 
     @staticmethod
     def get_all_users():
-        """ 
+        """\
         returns all users
         """
         return users
 
     @staticmethod
     def login(user_name, password):
-        """ 
+        """\
         logs in user
         """
         for user in users:
@@ -66,7 +66,7 @@ class User:
 
     @staticmethod
     def check_user_exists(user_name, password):
-        """ 
+        """
         checks if user exists
         """
         for user in users:

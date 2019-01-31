@@ -18,7 +18,7 @@ class TestIntervention(unittest.TestCase):
             "file": "ed.jpg",
             "comment": "all is well"
         }
-        
+
         self.user = {
             "first_name": "edna",
             "last_name": "nakajugo",
@@ -27,7 +27,7 @@ class TestIntervention(unittest.TestCase):
             "telephone": "0781370907",
             "user_name": "eddiena",
             "password": "ednanakaju",
-            "isadmin":"False"
+            "isadmin": "False"
         }
         self.user_credentials = {
             "user_name": "eddiena",
@@ -96,9 +96,9 @@ class TestIntervention(unittest.TestCase):
     def test_delete_intervention_that_exists(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         print("token:", jwt_token)
-        post_method=self.test_client.post('/api/v2/interventions', headers=dict(
+        post_method = self.test_client.post('/api/v2/interventions', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(self.intervention))
-        print("data podted:",post_method.data)
+        print("data podted:", post_method.data)
         response = self.test_client.delete('/api/v2/interventions/1', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json")
         print("response", response.data)
@@ -144,7 +144,7 @@ class TestIntervention(unittest.TestCase):
         response = self.test_client.post('/api/v2/interventions', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(missing_file))
         self.assertEqual(response.status_code, 400)
-    
+
     def test_get_interventions_when_table_empty(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.get('/api/v2/interventions', headers=dict(
@@ -153,47 +153,76 @@ class TestIntervention(unittest.TestCase):
 
     def test_edit_intervention_comment(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        comment={"comment":"corruption"}
+        comment = {"comment": "corruption"}
         response = self.test_client.post(
             '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
         response = self.test_client.patch(
             '/api/v2/interventions/1/comment', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(comment))
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code, 200)
 
     def test_edit_intervention_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location={"location":888888}
+        location = {"location": 888888}
         response = self.test_client.post(
             '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
         response = self.test_client.patch(
             '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
-        self.assertEqual(response.status_code,200)
+        self.assertEqual(response.status_code, 200)
 
     def test_eidt_location_intervention_that_doesnot_exist(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location={"location":888888}
+        location = {"location": 888888}
         response = self.test_client.patch(
             '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
-        self.assertEqual(response.status_code,404)
+        self.assertEqual(response.status_code, 404)
 
     def test_eidt_comment_intervention_that_doesnot_exist(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        comment={"comment":"corruption"}
+        comment = {"comment": "corruption"}
         response = self.test_client.patch(
             '/api/v2/interventions/1/comment', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(comment))
-        self.assertEqual(response.status_code,404)
-
+        self.assertEqual(response.status_code, 404)
 
     def test_edit_intervention_with_invalid_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location={"location":"888888"}
+        location = {"location": "888888"}
         response = self.test_client.post(
             '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
         response = self.test_client.patch(
             '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
-        response_data=json.loads(response.data.decode())
-        self.assertEqual(response.status_code,400)
-        self.assertEqual(response_data["message"],"location must be an integer of less then 9 integers")
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response_data["message"], "location must be an integer of less then 9 integers")
 
-    
-   
+    def test_update_status(self):
+        admin = {
+            "first_name": "edna",
+            "last_name": "nakajugo",
+            "other_names": "abenakyo",
+            "email": "ed@gmail.com",
+            "telephone": "0781370907",
+            "user_name": "joseph",
+            "password": "mukasajo",
+            "isadmin": "True"
+        }
+        admin_credentials = {
+            "user_name": "joseph",
+            "password": "mukasajo"
+        }
+        new_status = {
+            "status": "rejected"
+        }
+
+        response = self.test_client.post(
+            '/api/v2/auth/signup', data=json.dumps(admin))
+        login_response = self.test_client.post(
+            '/api/v2/auth/login', data=json.dumps(admin_credentials), content_type="application/json")
+        jwt_token = json.loads(login_response.data)["token"]
+        response = self.test_client.post(
+            '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
+        response = self.test_client.patch('/api/v2/interventions/1/status', headers=dict(
+            Authorization="Bearer " + jwt_token), data=json.dumps(new_status))
+        response_data = json.loads(response.data.decode())
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response_data["data"][0]["message"],"updated Interventions status")
