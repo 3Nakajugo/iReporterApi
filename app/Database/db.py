@@ -1,7 +1,7 @@
 import os
 import psycopg2
 import psycopg2.extras
-from pprint import pprint
+
 
 
 class Database:
@@ -15,6 +15,7 @@ class Database:
                 self.cursor_obj = self.connection.cursor(
                     cursor_factory=psycopg2.extras.RealDictCursor)
                 self.connection.autocommit = True
+                print("hello")
             else:
                 self.connection = psycopg2.connect(
                     dbname="reporter", user="edna", password="edna123", host="localhost", port="5432")
@@ -48,6 +49,7 @@ class Database:
             self.cursor_obj.execute(command)
 
     def drop_tables(self):
+        """ deletes tables"""
         query = 'DROP TABLE users,redflags,interventions;'
         self.cursor_obj.execute(query)
 
@@ -187,11 +189,22 @@ class Database:
         new_comment = self.cursor_obj
         return new_comment
 
-    def update_status(self,incident_id,status):
+    def update_intervention_status(self, status, incident_id):
         """
         update status
         """
-        query= ("""UPDATE interventions SET status='{}' WHERE incident_id={}""").format(status,incident_id)
+        query = ("""UPDATE interventions SET status='{}' WHERE incident_id={}""").format(
+            status, incident_id)
+        self.cursor_obj.execute(query)
+        new_status = self.cursor_obj
+        return new_status
+
+    def update_redflag_status(self, status, incident_id):
+        """
+        update status of redflag.
+        """
+        query = ("""UPDATE redflags SET status='{}' WHERE incident_id={}""").format(
+            status, incident_id)
         self.cursor_obj.execute(query)
         new_status = self.cursor_obj
         return new_status

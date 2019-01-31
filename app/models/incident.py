@@ -17,9 +17,7 @@ class Incident:
         self.comment = comment
 
     def to_json(self):
-        """ 
-        method to turn incident to dictionary
-        """
+        """ method to turn incident to dictionary"""
         return {
             "incident_id": self.incident_id,
             "date": self.date,
@@ -33,9 +31,7 @@ class Incident:
 
     @staticmethod
     def create(incident):
-        """ 
-        method to create incident
-        """
+        """  method to create incident"""
         new_incident = incident.to_json()
         incidents.append(new_incident)
         return incidents

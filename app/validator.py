@@ -65,8 +65,10 @@ class Validator:
             return "please input telephone"
         if not telephone.isdigit():
             return "phone number should be intergers"
+        if not user_name.isalpha():
+            return "username should contain no spaces"
         if not password.isalpha():
-            return "password should contain no spaces "
+            return "password should contain no spaces"
         if len(telephone) is not 10:
             return "Phone number must be 10 characters"
         if len(user_name) < 5:
