@@ -40,6 +40,9 @@ iReporter enables any/every citizen to bring any form of corruption to the notic
 ``` $ pytest ```
 
 
+## Documentation
+
+https://documenter.getpostman.com/view/5689782/RzthRWyK
 
 ## End points
 
