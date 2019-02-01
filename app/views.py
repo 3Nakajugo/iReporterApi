@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
@@ -13,6 +14,7 @@ incident_validator = Validator()
 database_obj = Database()
 
 app = Flask(__name__)
+CORS(app, resources=r'/api/*')
 
 database = Database()
 database.create_tables()
