@@ -37,7 +37,6 @@ def register_user():
     request_data = request.get_json(force=True)
     first_name = request_data.get('first_name')
     last_name = request_data.get('last_name')
-    other_names = request_data.get('other_names')
     email = request_data.get('email')
     telephone = request_data.get('telephone')
     user_name = request_data.get('user_name')
@@ -53,15 +52,14 @@ def register_user():
     invalid_email = incident_validator.validate_email(email)
     if invalid_email:
         return jsonify({"status": 400, "message": invalid_email}), 400
-    invalid_names = incident_validator.validate_names(
-        first_name, last_name, other_names)
+    invalid_names = incident_validator.validate_names(first_name, last_name)
     if invalid_names:
         return jsonify({"status": 400, "message": invalid_names}), 400
     user_exists = database.get_user_by_username(user_name)
     if user_exists:
         return jsonify({"status": 400, "message": "username already exists"}), 400
     user_record = database_obj.create_user(
-        first_name, last_name, other_names, email, telephone, user_name, password, isadmin)
+        first_name, last_name,  email, telephone, user_name, password, isadmin)
     if not user_record:
         return jsonify({"status": 400, "message": "user has not been created"}), 400
     return jsonify({"data": [user_record],

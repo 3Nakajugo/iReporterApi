@@ -85,7 +85,7 @@ class Validator:
         if not valid_email.match(email):
             return "please input valid email"
 
-    def validate_names(self, first_name, last_name, other_names):
+    def validate_names(self, first_name, last_name):
         """ 
         validates names
         """
@@ -93,15 +93,11 @@ class Validator:
             return "first_name is missing"
         if not last_name:
             return "last_name is missing"
-        if not other_names:
-            return "other_name is missing"
         if not first_name.isalpha():
             return "firstname should not contain spaces or special characters"
         if not last_name.isalpha():
             return "last_name should not contain spaces or special characters"
-        if not other_names.isalpha():
-            return "other_name should not contain spaces or special characters"
-        if len(first_name) > 15 or len(last_name) > 15 or len(other_names) > 15:
+        if len(first_name) > 15 or len(last_name) > 15:
             return "names must not exceed 15 characters"
 
     def validate_isadmin(self,isadmin):
