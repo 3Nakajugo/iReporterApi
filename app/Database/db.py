@@ -9,19 +9,11 @@ class Database:
 
     def __init__(self):
         try:
-            if os.getenv('APP_SETTINGS') == 'testing':
-                self.connection = psycopg2.connect(
-                    dbname="testdb", user="postgres", host="localhost", port="5432")
-                self.cursor_obj = self.connection.cursor(
-                    cursor_factory=psycopg2.extras.RealDictCursor)
-                self.connection.autocommit = True
-                print("hello")
-            else:
-                self.connection = psycopg2.connect(
-                    dbname="reporter", user="edna", password="edna123", host="localhost", port="5432")
-                self.cursor_obj = self.connection.cursor(
-                    cursor_factory=psycopg2.extras.RealDictCursor)
-                self.connection.autocommit = True
+            self.connection = psycopg2.connect(
+            dbname="dfcodssa5u7h7l", user="kdcqzeryvfzvuc", password="9dc7bd28f9951d16df2bbe0a0712ec3467b6646dcb08abfd394e197cece49587",host="ec2-50-17-193-83.compute-1.amazonaws.com", port="5432")
+            self.cursor_obj = self.connection.cursor(
+            cursor_factory=psycopg2.extras.RealDictCursor)
+            self.connection.autocommit = True
         except:
             print("cannot connect succesfully")
 
