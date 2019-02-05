@@ -6,7 +6,7 @@ import datetime
 from .models.incident import Incident
 from .models.user import User, users
 from .validator import Validator
-from .helpers import encode_token, auth, admin
+from .helpers import encode_token, auth, admin  
 from .Database.db import Database
 
 
@@ -44,20 +44,20 @@ def register_user():
     isadmin = request_data.get('isadmin')
     invalid_user = incident_validator.validate_user_credentials(
         email, password, user_name, telephone)
-    invalid_isadmin = incident_validator.validate_isadmin(isadmin)
-    if invalid_isadmin:
-        return jsonify({"status": 400, "message": invalid_isadmin}), 400
     if invalid_user:
         return jsonify({"status": 400, "message": invalid_user}), 400
+    user_exists = database.get_user_by_username(user_name)
+    if user_exists:
+        return jsonify({"status": 400, "message": "username already exists"}), 400
     invalid_email = incident_validator.validate_email(email)
     if invalid_email:
         return jsonify({"status": 400, "message": invalid_email}), 400
     invalid_names = incident_validator.validate_names(first_name, last_name)
     if invalid_names:
         return jsonify({"status": 400, "message": invalid_names}), 400
-    user_exists = database.get_user_by_username(user_name)
-    if user_exists:
-        return jsonify({"status": 400, "message": "username already exists"}), 400
+    invalid_isadmin = incident_validator.validate_isadmin(isadmin)
+    if invalid_isadmin:
+        return jsonify({"status": 400, "message": invalid_isadmin}), 400
     user_record = database_obj.create_user(
         first_name, last_name,  email, telephone, user_name, password, isadmin)
     if not user_record:
@@ -79,11 +79,11 @@ def login():
     if missing_credentials:
         return jsonify({"message": missing_credentials, "status": 400}), 400
     user_credentials = database.login(user_name, password)
+    if user_credentials is None:
+        return jsonify({"message": "no user with such credentials", "status": 401}), 401
     user_login = user_credentials["user_name"]
     isadmin = user_credentials["isadmin"]
     token = encode_token(user_login, isadmin)
-    if user_credentials is None:
-        return jsonify({"message": "no user with such credentials", "status": 401}), 401
     return jsonify({"message": "successfully logged in", "status": 200,
                     "token": token, "data": [user_credentials]}), 200
 
