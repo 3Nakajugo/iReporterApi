@@ -41,7 +41,7 @@ class Validator:
             return "location is missing"
         if not (isinstance(location, int)):
             return "location must be an integer of less then 9 integers"
-    
+
     def edit_comment(self, comment):
         """
         validates edit comment
@@ -51,35 +51,37 @@ class Validator:
         if comment.isspace():
             return "comment must not be empty"
 
-    def validate_user_credentials(self, email, password, user_name, telephone):
+    def validate_user_credentials(self, password, user_name, telephone):
         """
         validates create user
         """
         if not user_name or user_name.isspace():
             return "username is missing"
-        if not password or password.isspace():
-            return "password is missing"
-        if not email or email.isspace():
-            return "please input email"
         if not telephone or telephone.isspace():
             return "please input telephone"
         if not telephone.isdigit():
             return "phone number should be intergers"
         if not user_name.isalpha():
             return "username should contain no spaces"
-        if not password.isalpha():
-            return "password should contain no spaces"
         if len(telephone) is not 10:
             return "Phone number must be 10 characters"
         if len(user_name) < 5:
             return "username must be longer than 5 characters"
-        if len(password) < 8:
-            return "password must be longer than 8 characters"
+
+    def validate_password(self, password):
+        if not password or password.isspace():
+            return "password is missing"
+        if not re.match(r'[A-Za-z0-9@#$%^&+=]{8,}', password):
+            return "password must be longer than 8 characters and cannot contain an underscore"
+        if re.search(r'\s', password):
+            return "password should not contain spaces"
 
     def validate_email(self, email):
-        """ 
+        """
         validates email
         """
+        if not email or email.isspace():
+            return "please input email"
         valid_email = re.compile(
             r"(^[a-zA-Z0-9_.]+@[a-zA-Z0-9]+\.[a-z]+$)")
         if not valid_email.match(email):
@@ -100,7 +102,7 @@ class Validator:
         if len(first_name) > 15 or len(last_name) > 15:
             return "names must not exceed 15 characters"
 
-    def validate_isadmin(self,isadmin):
+    def validate_isadmin(self, isadmin):
         """
         validates role
         """
@@ -108,5 +110,5 @@ class Validator:
             return "role is missing"
         if isadmin.isspace():
             return "role cannot be  empty"
-        if isadmin not in ["True","False"]:
+        if isadmin not in ["True", "False"]:
             return "role should be True or False"
