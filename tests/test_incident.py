@@ -202,12 +202,11 @@ class TestIntervention(unittest.TestCase):
             "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "joseph",
-            "password": "mukasajo",
-            "isadmin": "True"
+            "user_name": "admin",
+            "password": "mukasajo"
         }
         admin_credentials = {
-            "user_name": "joseph",
+            "user_name": "admin",
             "password": "mukasajo"
         }
         new_status = {

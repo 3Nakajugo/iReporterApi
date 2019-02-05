@@ -41,7 +41,9 @@ def register_user():
     telephone = request_data.get('telephone')
     user_name = request_data.get('user_name')
     password = request_data.get('password')
-    isadmin = request_data.get('isadmin')
+    isadmin = 'False'
+    if (user_name == 'admin'):
+        isadmin = 'True'
     invalid_user = incident_validator.validate_user_credentials(
         password, user_name, telephone)
     if invalid_user:
