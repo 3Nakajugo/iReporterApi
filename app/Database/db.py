@@ -20,9 +20,9 @@ class Database:
     def create_tables(self):
         commands = (
             """CREATE TABLE IF NOT EXISTS users ( user_id SERIAL PRIMARY KEY NOT NULL,
-            first_name VARCHAR NOT NULL, last_name VARCHAR NOT NULL,other_names VARCHAR NOT NULL,
+            first_name VARCHAR NOT NULL, last_name VARCHAR NOT NULL,
             email VARCHAR NOT NULL, telephone INT NOT NULL,user_name VARCHAR UNIQUE NOT NULL,
-            password VARCHAR(10) NOT NULL,registered TIMESTAMPTZ DEFAULT NOW(), isadmin BOOLEAN)
+            password VARCHAR(20) NOT NULL,registered TIMESTAMPTZ DEFAULT NOW(), isadmin BOOLEAN)
         """,
             """CREATE TABLE IF NOT EXISTS redflags(incident_id SERIAL PRIMARY KEY NOT NULL,
             incident_type VARCHAR DEFAULT 'redflag' , date TIMESTAMPTZ DEFAULT NOW(),
@@ -45,12 +45,12 @@ class Database:
         query = 'DROP TABLE users,redflags,interventions;'
         self.cursor_obj.execute(query)
 
-    def create_user(self, first_name, last_name, other_names, email, telephone, user_name, password, isadmin):
+    def create_user(self, first_name, last_name, email, telephone, user_name, password, isadmin):
         """
         creates user in database table users
         """
-        query = ("""INSERT INTO users(first_name, last_name, other_names, email, telephone, user_name, password,isadmin) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}')RETURNING user_name """.format(
-            first_name, last_name, other_names, email, telephone, user_name, password, isadmin))
+        query = ("""INSERT INTO users(first_name, last_name, email, telephone, user_name, password,isadmin) VALUES ('{}','{}','{}','{}','{}','{}','{}')RETURNING user_name """.format(
+            first_name, last_name, email, telephone, user_name, password, isadmin))
         self.cursor_obj.execute(query)
         returned_record = self.cursor_obj.fetchone()
         return returned_record
