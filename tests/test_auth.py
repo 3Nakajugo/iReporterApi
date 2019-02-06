@@ -107,7 +107,7 @@ class TestApi(unittest.TestCase):
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data["message"],
-                         "password must be longer than 8 characters")
+                         "password must be longer than 8 characters and cannot contain an underscore")
 
     def test_login(self):
         """

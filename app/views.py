@@ -6,7 +6,7 @@ import datetime
 from .models.incident import Incident
 from .models.user import User, users
 from .validator import Validator
-from .helpers import encode_token, auth, admin  
+from .helpers import encode_token, auth, admin
 from .Database.db import Database
 
 
@@ -43,9 +43,12 @@ def register_user():
     password = request_data.get('password')
     isadmin = request_data.get('isadmin')
     invalid_user = incident_validator.validate_user_credentials(
-        email, password, user_name, telephone)
+        password, user_name, telephone)
     if invalid_user:
         return jsonify({"status": 400, "message": invalid_user}), 400
+    invalid_password = incident_validator.validate_password(password)
+    if invalid_password:
+        return jsonify({"status": 400, "message": invalid_password}), 400
     user_exists = database.get_user_by_username(user_name)
     if user_exists:
         return jsonify({"status": 400, "message": "username already exists"}), 400
