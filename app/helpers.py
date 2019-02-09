@@ -33,27 +33,10 @@ def auth(func):
             try:
                 payload = jwt.decode(token, SECRECT_KEY, algorithms=['HS256'])
                 current_user = payload["user"]
+                admin = payload["isadmin"]
             except jwt.InvalidSignatureError:
                 return jsonify({"message": "token is invalid", "status": 401}), 401
             except jwt.ExpiredSignatureError:
                 return jsonify({"message": " Your token has expired", "status": 401}), 401
-        return func(current_user, *args, **kwargs)
-    return decorator
-
-
-def admin(func):
-    """ decorator for admin routes"""
-    @wraps(func)
-    def decorator(*args, **kwargs):
-        if 'Authorization' not in request.headers:
-            return jsonify({"message": "Missing Authorization Header", "status": "401"}), 401
-        if 'Authorization' in request.headers:
-            token = request.headers["Authorization"].split(" ")[1]
-            try:
-                payload = jwt.decode(token, SECRECT_KEY, algorithms=['HS256'])
-                if not payload["isadmin"] is True:
-                    return jsonify({"message": "You are noy authorized to acces this route", "status": 401}), 401
-            except jwt.InvalidSignatureError:
-                return jsonify({"message": "token is invalid", "status": 401}), 401
-        return func(*args, **kwargs)
+        return func(current_user, admin, *args, **kwargs)
     return decorator

@@ -116,7 +116,7 @@ class TestIntervention(unittest.TestCase):
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
-            response_data["message"], "location must be an integer of less then 9 integers")
+            response_data["message"], "location is missing")
 
     def test_posting_missing_comment(self):
         jwt_token = json.loads(self.login_response.data)["token"]
@@ -176,7 +176,7 @@ class TestIntervention(unittest.TestCase):
             '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
         self.assertEqual(response.status_code, 404)
 
-    def test_eidt_comment_intervention_that_doesnot_exist(self):
+    def test_edit_comment_intervention_that_doesnot_exist(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         comment = {"comment": "corruption"}
         response = self.test_client.patch(
