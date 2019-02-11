@@ -25,8 +25,7 @@ class TestRedflag(unittest.TestCase):
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
-            "password": "ednanakaju",
-            "isadmin": "False"
+            "password": "ednanakaju"
         }
         self.user_credentials = {
             "user_name": "eddiena",
@@ -167,12 +166,11 @@ class TestRedflag(unittest.TestCase):
             "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
-            "user_name": "joseph",
-            "password": "mukasajo",
-            "isadmin": "True"
+            "user_name": "admin",
+            "password": "mukasajo"
         }
         admin_credentials = {
-            "user_name": "joseph",
+            "user_name": "admin",
             "password": "mukasajo"
         }
         new_status = {

@@ -6,7 +6,7 @@ import datetime
 from .models.incident import Incident
 from .models.user import User, users
 from .validator import Validator
-from .helpers import encode_token, auth, admin
+from .helpers import encode_token, auth
 from .Database.db import Database
 
 
@@ -41,7 +41,9 @@ def register_user():
     telephone = request_data.get('telephone')
     user_name = request_data.get('user_name')
     password = request_data.get('password')
-    isadmin = request_data.get('isadmin')
+    isadmin = 'False'
+    if (user_name == 'admin'):
+        isadmin = 'True'
     invalid_user = incident_validator.validate_user_credentials(
         password, user_name, telephone)
     if invalid_user:
@@ -93,7 +95,7 @@ def login():
 
 @app.route('/api/v2/redflags', methods=['POST'])
 @auth
-def create_redflag(current_user):
+def create_redflag(current_user, admin):
     """
     creates redflag
     """
@@ -114,7 +116,7 @@ def create_redflag(current_user):
 
 @app.route('/api/v2/interventions', methods=['POST'])
 @auth
-def create_intervention(current_user):
+def create_intervention(current_user, admin):
     """
     creates intervention
     """
@@ -123,6 +125,7 @@ def create_intervention(current_user):
     file = request_data.get('file')
     comment = request_data.get('comment')
     createdby = current_user
+    print(current_user)
     invalid_incident = incident_validator.validate_incident(
         location, file, comment)
     if invalid_incident:
@@ -135,7 +138,7 @@ def create_intervention(current_user):
 
 @app.route('/api/v2/redflags', methods=['GET'])
 @auth
-def get_all_redflags(current_user):
+def get_all_redflags(current_user, admin):
     """
     gets all red flags
     """
@@ -147,7 +150,7 @@ def get_all_redflags(current_user):
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['GET'])
 @auth
-def get_single_redflag(current_user, incident_id):
+def get_single_redflag(current_user, admin, incident_id):
     """
     gets single redflag
     """
@@ -159,7 +162,7 @@ def get_single_redflag(current_user, incident_id):
 
 @app.route('/api/v2/redflags/<int:incident_id>', methods=['DELETE'])
 @auth
-def delete_single_redflag(current_user, incident_id):
+def delete_single_redflag(current_user, admin, incident_id):
     """
     deletes a single redflag
     """
@@ -172,7 +175,7 @@ def delete_single_redflag(current_user, incident_id):
 
 @app.route('/api/v2/redflags/<int:incident_id>/location', methods=['PATCH'])
 @auth
-def edit_location(current_user, incident_id):
+def edit_location(current_user, admin, incident_id):
     """
     edits location of a single redflag
     """
@@ -192,7 +195,7 @@ def edit_location(current_user, incident_id):
 
 @app.route('/api/v2/redflags/<int:incident_id>/comment', methods=['PATCH'])
 @auth
-def edit_comment(current_user, incident_id):
+def edit_comment(current_user, admin, incident_id):
     """
     method for editing comment of a single redflag
     """
@@ -212,7 +215,7 @@ def edit_comment(current_user, incident_id):
 
 @app.route('/api/v2/interventions', methods=['GET'])
 @auth
-def all_interventions(current_user):
+def all_interventions(current_user, admin):
     """
     gets all interventions
     """
@@ -224,7 +227,7 @@ def all_interventions(current_user):
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['GET'])
 @auth
-def get_single_intervention(current_user, incident_id):
+def get_single_intervention(current_user, admin, incident_id):
     """
     gets single intervention 
     """
@@ -238,7 +241,7 @@ def get_single_intervention(current_user, incident_id):
 
 @app.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
 @auth
-def delete_single_interevention(current_user, incident_id):
+def delete_single_interevention(current_user, admin, incident_id):
     """
     deletes single intervention
     """
@@ -251,7 +254,7 @@ def delete_single_interevention(current_user, incident_id):
 
 @app.route('/api/v2/interventions/<int:incident_id>/location', methods=['PATCH'])
 @auth
-def edit_intervention_location(current_user, incident_id):
+def edit_intervention_location(current_user, admin, incident_id):
     """
     edits location of a single intervention
     """
@@ -270,7 +273,7 @@ def edit_intervention_location(current_user, incident_id):
 
 @app.route('/api/v2/interventions/<int:incident_id>/comment', methods=['PATCH'])
 @auth
-def edit_intervention_comment(current_user, incident_id):
+def edit_intervention_comment(current_user, admin, incident_id):
     """
     edits comment of a single intervention
     """
@@ -287,31 +290,34 @@ def edit_intervention_comment(current_user, incident_id):
 
 
 @app.route('/api/v2/interventions/<int:incident_id>/status', methods=["PATCH"])
-@admin
-def update_interventions_status(incident_id):
+@auth
+def update_interventions_status(current_user, admin, incident_id):
     """ 
     updates status of intervention
     """
-    status_data = request.get_json(force=True)
-    status = status_data.get("status")
-    intervention = database_obj.get_single_intervention(incident_id)
-    print(intervention)
-    if intervention["status"] == "draft":
-        database_obj.update_intervention_status(status, incident_id)
-        return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated Interventions status"}]}), 200
-    return jsonify({"status": 400, "message": "record can not be updated because status is not draft"}), 400
+    if admin == True:
+        status_data = request.get_json(force=True)
+        status = status_data.get("status")
+        intervention = database_obj.get_single_intervention(incident_id)
+        if intervention and intervention["status"] == "draft":
+            database_obj.update_intervention_status(status, incident_id)
+            return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated Interventions status"}]}), 200
+        return jsonify({"status": 400, "message": "record can not be updated because status is not draft or doesnot exist"}), 400
+    return jsonify({"message": "You are not authorized to acces this route", "status": 401}), 401
 
 
 @app.route('/api/v2/redflags/<int:incident_id>/status', methods=["PATCH"])
-@admin
-def update_redflag_status(incident_id):
+@auth
+def update_redflag_status(current_user, admin, incident_id):
     """ 
     updates status of redflag
     """
-    status_data = request.get_json(force=True)
-    status = status_data.get("status")
-    redflag = database_obj.get_single_redflag(incident_id)
-    if redflag["status"] == "draft":
-        database_obj.update_redflag_status(status, incident_id)
-        return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated redflag's status"}]}), 200
-    return jsonify({"status": 400, "message": "record can not be updated because status is not draft"}), 400
+    if admin == True:
+        status_data = request.get_json(force=True)
+        status = status_data.get("status")
+        redflag = database_obj.get_single_redflag(incident_id)
+        if redflag and redflag["status"] == "draft":
+            database_obj.update_redflag_status(status, incident_id)
+            return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated redflag's status"}]}), 200
+        return jsonify({"status": 400, "message": "record can not be updated because status is not draft or doesnot exist"}), 400
+    return jsonify({"message": "You are not authorized to acces this route", "status": 401}), 401

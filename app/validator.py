@@ -11,8 +11,8 @@ class Validator:
         """
         validates create incident
         """
-        if not (isinstance(location, int)):
-            return "location must be an integer of less then 9 integers"
+        # if not (isinstance(location, int)):
+        #     return "location must be an integer of less then 9 integers"
         if not location:
             return "location is missing"
         if not file or file.isspace():
