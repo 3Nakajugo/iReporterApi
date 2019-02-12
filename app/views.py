@@ -186,7 +186,7 @@ def edit_location(current_user, admin, incident_id):
         return jsonify({"status": 400, "message": invalid_edit}), 400
     redflag = database_obj.get_single_redflag(incident_id)
     print(redflag)
-    if redflag:
+    if redflag and redflag["status"] == "draft":
         database_obj.update_location(location, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated redflag's location"}]}), 200
@@ -206,7 +206,7 @@ def edit_comment(current_user, admin, incident_id):
         return jsonify({"status": 400, "message": invalid_edit}), 400
     redflag = database_obj.get_single_redflag(incident_id)
     print(redflag)
-    if redflag:
+    if redflag and redflag["status"] == "draft":
         database_obj.update_comment(comment, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated redflag's comment"}]}), 200
@@ -264,7 +264,7 @@ def edit_intervention_location(current_user, admin, incident_id):
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
     intervention = database_obj.get_single_intervention(incident_id)
-    if intervention:
+    if intervention and intervention["status"] == "draft":
         database_obj.update_intervention_location(location, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id,
                                                  "message": "Updated intervention's location"}]}), 200
@@ -283,7 +283,7 @@ def edit_intervention_comment(current_user, admin, incident_id):
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
     intervention = database_obj.get_single_intervention(incident_id)
-    if intervention:
+    if intervention and intervention["status"] == "draft":
         database_obj.update_intervention_comment(comment, incident_id)
         return jsonify({"status": 200, "data": [{"incident_id": incident_id, "message": "Updated intervention's comment"}]}), 200
     return jsonify({"status": 404, "message": "No intervention with such an id"}), 404
@@ -299,10 +299,10 @@ def update_interventions_status(current_user, admin, incident_id):
         status_data = request.get_json(force=True)
         status = status_data.get("status")
         intervention = database_obj.get_single_intervention(incident_id)
-        if intervention and intervention["status"] == "draft":
+        if intervention:
             database_obj.update_intervention_status(status, incident_id)
             return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated Interventions status"}]}), 200
-        return jsonify({"status": 400, "message": "record can not be updated because status is not draft or doesnot exist"}), 400
+        return jsonify({"status": 400, "message": "record doesnot exist"}), 400
     return jsonify({"message": "You are not authorized to acces this route", "status": 401}), 401
 
 
@@ -319,8 +319,8 @@ def update_redflag_status(current_user, admin, incident_id):
         if invalid_status:
             return jsonify({"status": 400, "message": invalid_status}), 400
         redflag = database_obj.get_single_redflag(incident_id)
-        if redflag and redflag["status"] == "draft":
+        if redflag:
             database_obj.update_redflag_status(status, incident_id)
             return jsonify({"status": 200, "data": [{"id": incident_id, "message": "updated redflag's status"}]}), 200
-        return jsonify({"status": 400, "message": "record can not be updated because status is not draft or doesnot exist"}), 400
+        return jsonify({"status": 400, "message": "record doesnot exist"}), 400
     return jsonify({"message": "You are not authorized to acces this route", "status": 401}), 401
