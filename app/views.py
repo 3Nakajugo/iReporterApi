@@ -315,6 +315,9 @@ def update_redflag_status(current_user, admin, incident_id):
     if admin == True:
         status_data = request.get_json(force=True)
         status = status_data.get("status")
+        invalid_status = incident_validator.validate_status(status)
+        if invalid_status:
+            return jsonify({"status": 400, "message": invalid_status}), 400
         redflag = database_obj.get_single_redflag(incident_id)
         if redflag and redflag["status"] == "draft":
             database_obj.update_redflag_status(status, incident_id)
