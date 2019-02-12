@@ -12,7 +12,7 @@ def encode_token(user_name, isadmin):
     payload = {
         "user": user_name,
         "isadmin": isadmin,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=40)
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=24)
     }
     token = jwt.encode(
         payload,

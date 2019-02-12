@@ -112,3 +112,9 @@ class Validator:
             return "role cannot be  empty"
         if isadmin not in ["True", "False"]:
             return "role should be True or False"
+
+    def validate_status(self, status):
+        if not status or status.isspace():
+            return "status is missing"
+        if status not in ["rejected","resolved","under investigation"]:
+            return "status should be resolved,rejected or under investigation"
