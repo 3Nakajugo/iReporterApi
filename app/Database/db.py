@@ -208,6 +208,22 @@ class Database:
         self.cursor_obj.execute(query)
         new_status = self.cursor_obj
         return new_status
+    
+    def get_user_redflags(self,createdby):
+        query = (
+            """SELECT * FROM redflags WHERE createdby = '{}' """.format(createdby))
+        self.cursor_obj.execute(query)
+        records = self.cursor_obj.fetchall()
+        return records
+    
+    def get_user_interventions(self,createdby):
+        query = (
+            """SELECT * FROM interventions WHERE createdby = '{}' """.format(createdby))
+        self.cursor_obj.execute(query)
+        records = self.cursor_obj.fetchall()
+        return records
+
+    
 
 
 if __name__ == '__main__':

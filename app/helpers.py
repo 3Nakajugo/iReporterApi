@@ -31,12 +31,12 @@ def auth(func):
         if 'Authorization' in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
             try:
-                payload = jwt.decode(token, SECRECT_KEY, algorithms=['HS256'])
-                current_user = payload["user"]
-                admin = payload["isadmin"]
+                current_user = jwt.decode(token, SECRECT_KEY, algorithms=['HS256'])
+                # current_user = payload["user"]
+                # admin = payload["isadmin"]
             except jwt.InvalidSignatureError:
                 return jsonify({"message": "token is invalid", "status": 401}), 401
             except jwt.ExpiredSignatureError:
                 return jsonify({"message": " Your token has expired", "status": 401}), 401
-        return func(current_user, admin, *args, **kwargs)
+        return func(current_user, *args, **kwargs)
     return decorator

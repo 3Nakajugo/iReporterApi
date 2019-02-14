@@ -39,8 +39,8 @@ class Validator:
         """
         if not location:
             return "location is missing"
-        if not (isinstance(location, int)):
-            return "location must be an integer of less then 9 integers"
+        # if not (isinstance(location, int)):
+        #     return "location must be an integer of less then 9 integers"
 
     def edit_comment(self, comment):
         """
