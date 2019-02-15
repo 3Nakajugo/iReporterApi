@@ -105,10 +105,12 @@ def create_redflag(current_user):
     comment = request_data.get('comment')
     print(current_user)
     createdby = current_user['user']
-    invalid_incident = incident_validator.validate_incident(
-        location, file, comment)
+    invalid_incident = incident_validator.validate_incident(file, comment)
     if invalid_incident:
         return jsonify({"status": 400, "message": invalid_incident}), 400
+    invalid_location = incident_validator.validate_location(location)
+    if invalid_location:
+        return jsonify({"status": 400, "message": invalid_location}), 400
     incident_obj = database.create_redflag(location, file, comment, createdby)
     if incident_obj:
         return jsonify({"status": 201, "message": "Redflag has been created", "data": [incident_obj]}), 201
@@ -126,10 +128,12 @@ def create_intervention(current_user):
     comment = request_data.get('comment')
     createdby = current_user['user']
     print(current_user)
-    invalid_incident = incident_validator.validate_incident(
-        location, file, comment)
+    invalid_incident = incident_validator.validate_incident(file, comment)
     if invalid_incident:
         return jsonify({"status": 400, "message": invalid_incident}), 400
+    invalid_location = incident_validator.validate_location(location)
+    if invalid_location:
+        return jsonify({"status": 400, "message": invalid_location}), 400
     incident_obj = database.create_intervention(
         location, file, comment, createdby)
     if incident_obj:
@@ -189,7 +193,7 @@ def edit_location(current_user,incident_id):
     """
     edit_redflag_location = request.get_json(force=True)
     location = edit_redflag_location.get("location")
-    invalid_edit = incident_validator.edit_location(location)
+    invalid_edit = incident_validator.validate_location(location)
     if invalid_edit:
         return jsonify({"status": 400, "message": invalid_edit}), 400
     redflag = database_obj.get_single_redflag(incident_id)
@@ -274,7 +278,7 @@ def edit_intervention_location(current_user, incident_id):
     """
     edit_intervention_location = request.get_json(force=True)
     location = edit_intervention_location.get("location")
-    valid_edit = incident_validator.edit_location(location)
+    valid_edit = incident_validator.validate_location(location)
     if valid_edit:
         return jsonify({"status": 400, "message": valid_edit}), 400
     intervention = database_obj.get_single_intervention(incident_id)

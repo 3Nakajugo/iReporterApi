@@ -14,7 +14,7 @@ class TestRedflag(unittest.TestCase):
         database.create_tables()
         self.test_client = app.test_client()
         self.redflag = {
-            "location": 902093392,
+            "location": "902093392",
             "file": "ed.jpg",
             "comment": "all is well"
         }
@@ -54,7 +54,7 @@ class TestRedflag(unittest.TestCase):
 
     def test_posting_missing_comment(self):
         missing_comment = {
-            "location": 902093392,
+            "location": "902093392",
             "file": "ed.jpg",
             "comment": ""
         }
@@ -65,7 +65,7 @@ class TestRedflag(unittest.TestCase):
 
     def test_posting_missing_file(self):
             missing_comment = {
-                "location": 902093392,
+                "location": "902093392",
                 "file": "",
                 "comment": "floods"
             }
@@ -151,7 +151,7 @@ class TestRedflag(unittest.TestCase):
     
     def test_edit_redflag_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location={"location":999999}
+        location={"location":"999999"}
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
         response = self.test_client.patch(

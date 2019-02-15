@@ -7,14 +7,10 @@ class Validator:
     validates incident
     """
 
-    def validate_incident(self, location, file, comment):
+    def validate_incident(self, file, comment):
         """
         validates create incident
         """
-        # if not (isinstance(location, int)):
-        #     return "location must be an integer of less then 9 integers"
-        if not location:
-            return "location is missing"
         if not file or file.isspace():
             return "An image or video is missing"
         if not comment or comment.isspace():
@@ -33,14 +29,12 @@ class Validator:
         if not password or password.isspace():
             return "password cannot be empty"
 
-    def edit_location(self, location):
+    def validate_location(self, location):
         """
         validates edit location
         """
-        if not location:
+        if not location or location.isspace():
             return "location is missing"
-        # if not (isinstance(location, int)):
-        #     return "location must be an integer of less then 9 integers"
 
     def edit_comment(self, comment):
         """

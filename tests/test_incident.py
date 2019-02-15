@@ -14,7 +14,7 @@ class TestIntervention(unittest.TestCase):
         database.create_tables()
         self.test_client = app.test_client()
         self.intervention = {
-            "location": 902093392,
+            "location": "902093392",
             "file": "ed.jpg",
             "comment": "all is well"
         }
@@ -121,7 +121,7 @@ class TestIntervention(unittest.TestCase):
     def test_posting_missing_comment(self):
         jwt_token = json.loads(self.login_response.data)["token"]
         missing_comment = {
-            "location": 56778,
+            "location": "56778",
             "file": "ed.jpg",
             "comment": ""
         }
@@ -137,7 +137,7 @@ class TestIntervention(unittest.TestCase):
         """
         jwt_token = json.loads(self.login_response.data)["token"]
         missing_file = {
-            "location": 56778,
+            "location": "56778",
             "file": "",
             "comment": "land slides"
         }
@@ -162,7 +162,7 @@ class TestIntervention(unittest.TestCase):
 
     def test_edit_intervention_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location = {"location": 888888}
+        location = {"location": "888888"}
         response = self.test_client.post(
             '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
         response = self.test_client.patch(
@@ -171,7 +171,7 @@ class TestIntervention(unittest.TestCase):
 
     def test_eidt_location_intervention_that_doesnot_exist(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location = {"location": 888888}
+        location = {"location": "888888"}
         response = self.test_client.patch(
             '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
         self.assertEqual(response.status_code, 404)
@@ -182,19 +182,6 @@ class TestIntervention(unittest.TestCase):
         response = self.test_client.patch(
             '/api/v2/interventions/1/comment', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(comment))
         self.assertEqual(response.status_code, 404)
-
-    # def test_edit_intervention_with_invalid_location(self):
-    #     jwt_token = json.loads(self.login_response.data)["token"]
-    #     location = {"location": 888888}
-    #     response = self.test_client.post(
-    #         '/api/v2/interventions', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.intervention))
-    #     response = self.test_client.patch(
-    #         '/api/v2/interventions/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
-    #     response_data = json.loads(response.data.decode())
-    #     self.assertEqual(response.status_code, 400)
-    #     self.assertEqual(
-    #         response_data["message"], "location must be an integer of less then 9 integers")
-
     def test_update_status(self):
         admin = {
             "first_name": "edna",
