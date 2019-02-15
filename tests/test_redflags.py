@@ -14,7 +14,7 @@ class TestRedflag(unittest.TestCase):
         database.create_tables()
         self.test_client = app.test_client()
         self.redflag = {
-            "location": 902093392,
+            "location": "902093392",
             "file": "ed.jpg",
             "comment": "all is well"
         }
@@ -54,7 +54,7 @@ class TestRedflag(unittest.TestCase):
 
     def test_posting_missing_comment(self):
         missing_comment = {
-            "location": 902093392,
+            "location": "902093392",
             "file": "ed.jpg",
             "comment": ""
         }
@@ -65,7 +65,7 @@ class TestRedflag(unittest.TestCase):
 
     def test_posting_missing_file(self):
             missing_comment = {
-                "location": 902093392,
+                "location": "902093392",
                 "file": "",
                 "comment": "floods"
             }
@@ -151,7 +151,7 @@ class TestRedflag(unittest.TestCase):
     
     def test_edit_redflag_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location={"location":999999}
+        location={"location":"999999"}
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
         response = self.test_client.patch(
@@ -189,4 +189,60 @@ class TestRedflag(unittest.TestCase):
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code,200)
         self.assertEqual(response_data["data"][0]["message"],"updated redflag's status")
+    
+    def test_update_redflag_status_invalid(self):
+        admin = {
+            "first_name": "edna",
+            "last_name": "nakajugo",
+            "other_names": "abenakyo",
+            "email": "ed@gmail.com",
+            "telephone": "0781370907",
+            "user_name": "admin",
+            "password": "mukasajo"
+        }
+        admin_credentials = {
+            "user_name": "admin",
+            "password": "mukasajo"
+        }
+        new_status = {
+            "status": "well"
+        }
+
+        response = self.test_client.post(
+            '/api/v2/auth/signup', data=json.dumps(admin))
+        login_response = self.test_client.post(
+            '/api/v2/auth/login', data=json.dumps(admin_credentials), content_type="application/json")
+        jwt_token = json.loads(login_response.data)["token"]
+        response = self.test_client.post(
+            '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
+        response = self.test_client.patch('/api/v2/redflags/1/status', headers=dict(
+            Authorization="Bearer " + jwt_token), data=json.dumps(new_status))
+        self.assertEqual(response.status_code,400)
+
+    def test_update_redflag_status_doesnot_exist(self):
+        admin = {
+            "first_name": "edna",
+            "last_name": "nakajugo",
+            "other_names": "abenakyo",
+            "email": "ed@gmail.com",
+            "telephone": "0781370907",
+            "user_name": "admin",
+            "password": "mukasajo"
+        }
+        admin_credentials = {
+            "user_name": "admin",
+            "password": "mukasajo"
+        }
+        new_status = {
+            "status": "rejected"
+        }
+
+        response = self.test_client.post(
+            '/api/v2/auth/signup', data=json.dumps(admin))
+        login_response = self.test_client.post(
+            '/api/v2/auth/login', data=json.dumps(admin_credentials), content_type="application/json")
+        jwt_token = json.loads(login_response.data)["token"]
+        response = self.test_client.patch('/api/v2/redflags/1/status', headers=dict(
+            Authorization="Bearer " + jwt_token), data=json.dumps(new_status))
+        self.assertEqual(response.status_code,404)
 
