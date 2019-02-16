@@ -27,13 +27,13 @@ class Database:
             """CREATE TABLE IF NOT EXISTS redflags(incident_id SERIAL PRIMARY KEY NOT NULL,
             incident_type VARCHAR DEFAULT 'redflag' , date TIMESTAMPTZ DEFAULT NOW(),
             createdby VARCHAR,
-            location INT NOT NULL, status VARCHAR DEFAULT 'draft',
+            location VARCHAR NOT NULL, status VARCHAR DEFAULT 'draft',
             file VARCHAR ,comment VARCHAR NOT NULL
         )""",
             """CREATE TABLE IF NOT EXISTS interventions(incident_id SERIAL PRIMARY KEY NOT NULL,
             incident_type VARCHAR DEFAULT 'intervention', date TIMESTAMPTZ DEFAULT NOW(), 
             createdby VARCHAR,
-            location INT NOT NULL, status VARCHAR DEFAULT 'draft',
+            location VARCHAR NOT NULL, status VARCHAR DEFAULT 'draft',
             file VARCHAR ,comment VARCHAR NOT NULL
         )"""
         )
