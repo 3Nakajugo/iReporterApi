@@ -72,7 +72,7 @@ class TestRedflag(unittest.TestCase):
             jwt_token = json.loads(self.login_response.data)["token"]
             response = self.test_client.post(
                 '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(missing_comment))
-            self.assertEqual(response.status_code,400)
+            self.assertEqual(response.status_code,201)
     
     def test_posting_missing_location(self):
             missing_comment = {
