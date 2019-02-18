@@ -14,23 +14,23 @@ class TestIntervention(unittest.TestCase):
         database.create_tables()
         self.test_client = app.test_client()
         self.intervention = {
-            "location": "902093392",
-            "file": "ed.jpg",
-            "comment": "all is well"
+            "location":"902093392",
+            "file":"ed.jpg",
+            "comment":"all is well"
         }
         self.user = {
-            "first_name": "edna",
-            "last_name": "nakajugo",
-            "other_names": "abenakyo",
-            "email": "ed@gmail.com",
-            "telephone": "0781370907",
+            "first_name":"edna",
+            "last_name":"nakajugo",
+            "other_names":"abenakyo",
+            "email":"ed@gmail.com",
+            "telephone":"0781370907",
             "user_name": "eddiena",
             "password": "ednanakaju",
             "isadmin": "False"
         }
         self.user_credentials = {
-            "user_name": "eddiena",
-            "password": "ednanakaju"
+            "user_name":"eddiena",
+            "password":"ednanakaju"
         }
         self.response = self.test_client.post(
             '/api/v2/auth/signup', data=json.dumps(self.user))
