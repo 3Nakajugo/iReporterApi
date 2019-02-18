@@ -11,7 +11,7 @@ class Validator:
         """
         validates create incident
         """
-        if not isinstance(file,str):
+        if not file:
             return "An image is missing"
         if not comment or comment.isspace():
             return"comment is missing"

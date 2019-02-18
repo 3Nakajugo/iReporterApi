@@ -142,7 +142,7 @@ class TestIntervention(unittest.TestCase):
         }
         response = self.test_client.post('/api/v2/interventions', headers=dict(
             Authorization="Bearer " + jwt_token), content_type="application/json", data=json.dumps(missing_file))
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code,400)
 
     def test_get_interventions_when_table_empty(self):
         jwt_token = json.loads(self.login_response.data)["token"]
