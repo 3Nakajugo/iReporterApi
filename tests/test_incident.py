@@ -18,7 +18,6 @@ class TestIntervention(unittest.TestCase):
             "file": "ed.jpg",
             "comment": "all is well"
         }
-
         self.user = {
             "first_name": "edna",
             "last_name": "nakajugo",
