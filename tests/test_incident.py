@@ -1,6 +1,6 @@
 import unittest
 import json
-from app.views import app
+from run import app
 from app.Database.db import Database
 
 database = Database()

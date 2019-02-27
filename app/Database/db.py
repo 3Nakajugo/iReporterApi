@@ -3,7 +3,6 @@ import psycopg2
 import psycopg2.extras
 
 
-
 class Database:
     """ database class"""
 
@@ -208,22 +207,26 @@ class Database:
         self.cursor_obj.execute(query)
         new_status = self.cursor_obj
         return new_status
-    
-    def get_user_redflags(self,createdby):
+
+    def get_user_redflags(self, createdby):
         query = (
             """SELECT * FROM redflags WHERE createdby = '{}' """.format(createdby))
         self.cursor_obj.execute(query)
         records = self.cursor_obj.fetchall()
         return records
-    
-    def get_user_interventions(self,createdby):
+
+    def get_user_interventions(self, createdby):
         query = (
             """SELECT * FROM interventions WHERE createdby = '{}' """.format(createdby))
         self.cursor_obj.execute(query)
         records = self.cursor_obj.fetchall()
         return records
 
-    
+    def get_all_users(self):
+        query = ("""SELECT * FROM users""")
+        self.cursor_obj.execute(query)
+        users = self.cursor_obj.fetchall()
+        return users
 
 
 if __name__ == '__main__':
