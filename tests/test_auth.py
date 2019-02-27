@@ -16,7 +16,6 @@ class TestApi(unittest.TestCase):
         self.user = {
             "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
@@ -54,7 +53,6 @@ class TestApi(unittest.TestCase):
         user = {
             "first_name": "",
             "last_name": "nakajugo",
-            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
@@ -73,7 +71,6 @@ class TestApi(unittest.TestCase):
         invalid_email_user = {
             "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenakyo",
             "email": "ed@gma il.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
@@ -92,7 +89,6 @@ class TestApi(unittest.TestCase):
         invalid_password_user = {
             "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
@@ -112,7 +108,6 @@ class TestApi(unittest.TestCase):
         user = {
             "first_name": "edna",
             "last_name": "nakajugo",
-            "other_names": "abenakyo",
             "email": "ed@gmail.com",
             "telephone": "0781370907",
             "user_name": "eddiena",
@@ -128,7 +123,7 @@ class TestApi(unittest.TestCase):
 
     def test_login_invalid_username(self):
         invalid_credentials = {"user_name": "",
-                       "password": "ednanakaju"}
+                               "password": "ednanakaju"}
         response = self.test_client.post(
             '/api/v2/auth/login', data=json.dumps(invalid_credentials))
         response_data = json.loads(response.data.decode())
@@ -138,30 +133,33 @@ class TestApi(unittest.TestCase):
 
     def test_login_invalid_password(self):
         invalid_credentials = {"user_name": "eddiena",
-                       "password": ""}
+                               "password": ""}
         response = self.test_client.post(
             '/api/v2/auth/login', data=json.dumps(invalid_credentials))
         response_data = json.loads(response.data.decode())
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response_data["message"],
                          "password cannot be empty")
-    
-    # def test_signup_when_admin_missing(self):
-    #     admin_missing = {
-    #         "first_name": "edna",
-    #         "last_name": "nakajugo",
-    #         "other_names": "abenakyo",
-    #         "email": "ed@gmail.com",
-    #         "telephone": "0781370907",
-    #         "user_name": "eddiena",
-    #         "password": "ednanakaju",
-    #          "isadmin":""
-    #     }
-    #     response = self.test_client.post(
-    #         '/api/v2/auth/signup', data=json.dumps(admin_missing))
-    #     self.assertEqual(response.status_code,400)
 
-
-        
-        
-
+    def test_view_all_users(self):
+        """
+        test get all users
+        """
+        admin = {
+            "first_name": "admin",
+            "last_name": "admin",
+            "email": "admin@gmail.com",
+            "telephone": "0781370907",
+            "user_name": "admin",
+            "password": "admin123"
+        }
+        admin_credentials = {"user_name": "admin",
+                       "password": "admin123"}
+        response = self.test_client.post(
+            '/api/v2/auth/signup', data=json.dumps(admin))
+        login_response = self.test_client.post(
+            '/api/v2/auth/login', data=json.dumps(admin_credentials))
+        jwt_token = json.loads(login_response.data)["token"]
+        response = self.test_client.get(
+            '/api/v2/users', headers=dict(Authorization="Bearer " + jwt_token))
+        self.assertEqual(response.status_code, 200)
