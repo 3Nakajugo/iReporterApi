@@ -32,8 +32,6 @@ def auth(func):
             token = request.headers["Authorization"].split(" ")[1]
             try:
                 current_user = jwt.decode(token, SECRECT_KEY, algorithms=['HS256'])
-                # current_user = payload["user"]
-                # admin = payload["isadmin"]
             except jwt.InvalidSignatureError:
                 return jsonify({"message": "token is invalid", "status": 401}), 401
             except jwt.ExpiredSignatureError:
