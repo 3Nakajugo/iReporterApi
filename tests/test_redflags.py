@@ -1,6 +1,6 @@
 import unittest
 import json
-from app.views import app
+from run import app
 from app.Database.db import Database
 
 database = Database()
@@ -61,29 +61,29 @@ class TestRedflag(unittest.TestCase):
         jwt_token = json.loads(self.login_response.data)["token"]
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(missing_comment))
-        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.status_code, 400)
 
     def test_posting_missing_file(self):
-            missing_comment = {
-                "location": "902093392",
-                "file": "",
-                "comment": "floods"
-            }
-            jwt_token = json.loads(self.login_response.data)["token"]
-            response = self.test_client.post(
-                '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(missing_comment))
-            self.assertEqual(response.status_code,400)
-    
+        missing_comment = {
+            "location": "902093392",
+            "file": "",
+            "comment": "floods"
+        }
+        jwt_token = json.loads(self.login_response.data)["token"]
+        response = self.test_client.post(
+            '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(missing_comment))
+        self.assertEqual(response.status_code, 400)
+
     def test_posting_missing_location(self):
-            missing_comment = {
-                "location":"",
-                "file": "floods.jpg",
-                "comment": "floods"
-            }
-            jwt_token = json.loads(self.login_response.data)["token"]
-            response = self.test_client.post(
-                '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(missing_comment))
-            self.assertEqual(response.status_code,400)
+        missing_comment = {
+            "location": "",
+            "file": "floods.jpg",
+            "comment": "floods"
+        }
+        jwt_token = json.loads(self.login_response.data)["token"]
+        response = self.test_client.post(
+            '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(missing_comment))
+        self.assertEqual(response.status_code, 400)
 
     def test_get_all_when_empty(self):
         jwt_token = json.loads(self.login_response.data)["token"]
@@ -142,22 +142,21 @@ class TestRedflag(unittest.TestCase):
 
     def test_edit_redflag_comment(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        comment={"comment":"corruption"}
+        comment = {"comment": "corruption"}
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
         response = self.test_client.patch(
             '/api/v2/redflags/1/comment', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(comment))
-        self.assertEqual(response.status_code,200)
-    
+        self.assertEqual(response.status_code, 200)
+
     def test_edit_redflag_location(self):
         jwt_token = json.loads(self.login_response.data)["token"]
-        location={"location":"999999"}
+        location = {"location": "999999"}
         response = self.test_client.post(
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
         response = self.test_client.patch(
             '/api/v2/redflags/1/location', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(location))
-        self.assertEqual(response.status_code,200)
-
+        self.assertEqual(response.status_code, 200)
 
     def test_update_status(self):
         admin = {
@@ -187,9 +186,10 @@ class TestRedflag(unittest.TestCase):
         response = self.test_client.patch('/api/v2/redflags/1/status', headers=dict(
             Authorization="Bearer " + jwt_token), data=json.dumps(new_status))
         response_data = json.loads(response.data.decode())
-        self.assertEqual(response.status_code,200)
-        self.assertEqual(response_data["data"][0]["message"],"updated redflag's status")
-    
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_data["data"][0]
+                         ["message"], "updated redflag's status")
+
     def test_update_redflag_status_invalid(self):
         admin = {
             "first_name": "edna",
@@ -217,7 +217,7 @@ class TestRedflag(unittest.TestCase):
             '/api/v2/redflags', headers=dict(Authorization="Bearer " + jwt_token), data=json.dumps(self.redflag))
         response = self.test_client.patch('/api/v2/redflags/1/status', headers=dict(
             Authorization="Bearer " + jwt_token), data=json.dumps(new_status))
-        self.assertEqual(response.status_code,400)
+        self.assertEqual(response.status_code, 400)
 
     def test_update_redflag_status_doesnot_exist(self):
         admin = {
@@ -244,5 +244,4 @@ class TestRedflag(unittest.TestCase):
         jwt_token = json.loads(login_response.data)["token"]
         response = self.test_client.patch('/api/v2/redflags/1/status', headers=dict(
             Authorization="Bearer " + jwt_token), data=json.dumps(new_status))
-        self.assertEqual(response.status_code,404)
-
+        self.assertEqual(response.status_code, 404)
