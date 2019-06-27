@@ -51,7 +51,7 @@ class Validator:
         """
         if not user_name or user_name.isspace():
             return "username is missing"
-        if not telephone or telephone.isspace():
+        if not telephone:
             return "please input telephone"
         if not telephone.isdigit():
             return "phone number should be intergers"

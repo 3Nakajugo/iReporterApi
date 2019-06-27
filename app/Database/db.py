@@ -10,7 +10,7 @@ class Database:
     def __init__(self):
         try:
             self.connection = psycopg2.connect(
-            dbname="dfcodssa5u7h7l", user="kdcqzeryvfzvuc", password="9dc7bd28f9951d16df2bbe0a0712ec3467b6646dcb08abfd394e197cece49587",host="ec2-50-17-193-83.compute-1.amazonaws.com", port="5432")
+            dbname="decl75v5a8lral", user="umawkyjvhwevfu", password="9a80a38840f1e0d1578fe2d932116056cf980d3adfbbd4e46ff57b96060c1f37",host="ec2-107-21-216-112.compute-1.amazonaws.com", port="5432")
             self.cursor_obj = self.connection.cursor(
             cursor_factory=psycopg2.extras.RealDictCursor)
             self.connection.autocommit = True
@@ -21,7 +21,7 @@ class Database:
         commands = (
             """CREATE TABLE IF NOT EXISTS users ( user_id SERIAL PRIMARY KEY NOT NULL,
             first_name VARCHAR NOT NULL, last_name VARCHAR NOT NULL,
-            email VARCHAR NOT NULL, telephone INT NOT NULL,user_name VARCHAR UNIQUE NOT NULL,
+            email VARCHAR NOT NULL, telephone VARCHAR NOT NULL,user_name VARCHAR UNIQUE NOT NULL,
             password VARCHAR(20) NOT NULL,registered TIMESTAMPTZ DEFAULT NOW(), isadmin BOOLEAN)
         """,
             """CREATE TABLE IF NOT EXISTS redflags(incident_id SERIAL PRIMARY KEY NOT NULL,
